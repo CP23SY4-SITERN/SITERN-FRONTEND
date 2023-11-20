@@ -1,13 +1,12 @@
 <script setup>
-import HelloWorld from "./components/HelloWorld.vue";
+import Dashboard from "./pages/Dashboard.vue";
 </script>
 
 <template>
   <div>
-    <HelloWorld msg="Vite + Vue" />
+    <Dashboard msg="Hello Vue 3 + Vite + Tailwind CSS" />
   </div>
 </template>
 
 <style scoped>
-
 </style>

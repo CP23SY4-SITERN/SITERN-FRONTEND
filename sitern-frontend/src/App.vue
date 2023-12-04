@@ -1,10 +1,11 @@
 <script setup>
-import Dashboard from "./pages/Dashboard.vue";
+import NavBar from "./components/NavBarComponent/NavBar.vue";
 </script>
 
 <template>
   <div>
-    <Dashboard msg="Hello Vue 3 + Vite + Tailwind CSS" />
+    <NavBar />
+    <router-view />
   </div>
 </template>
 

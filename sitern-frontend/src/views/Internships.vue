@@ -14,5 +14,4 @@
   import InternshipCard from '../components/InternshipComponent/InternshipCard.vue';
   
   const internships = internshipsStore.internships;
-
   </script>

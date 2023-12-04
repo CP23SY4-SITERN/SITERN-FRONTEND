@@ -14,9 +14,6 @@ const count = ref(0);
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <header>
-      <NavBar />
-    </header>
     <main class="flex-grow">
       <!-- Content to fill the main part -->
       <div class="flex items-center p-8">
@@ -36,7 +33,6 @@ const count = ref(0);
           />
         </svg>
       </div>
-
       <div class="p-8">
         <div class="flex items-center justify-between w-full">
           <Searchbox class="searchbox" />

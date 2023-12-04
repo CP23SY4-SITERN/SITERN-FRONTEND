@@ -1,47 +1,49 @@
 <template>
   <nav class="flex items-center justify-between flex-wrap p-6">
     <div class="flex items-center flex-shrink-0 ml-6 mr-20">
-      <span class="font-semibold text-4xl tracking-tight">SITern</span>
+      <router-link to="/" class="font-semibold text-4xl tracking-tight link">
+        SITern
+      </router-link>
     </div>
     <div class="navigator text-sm lg:flex-grow">
-      <a
-        href="#"
+      <router-link
+        to="/Internships"
         class="block mt-4 lg:inline-block lg:mt-0 hover:font-semibold ml-20 link"
       >
         Intern Search
-      </a>
-      <a
-        href="#"
+      </router-link>
+      <router-link
+        to="/Profile"
         class="block mt-4 lg:inline-block lg:mt-0 hover:font-semibold ml-20 link"
       >
         Profile
-      </a>
-      <a
-        href="#"
+      </router-link>
+      <router-link
+        to="/Status"
         class="block mt-4 lg:inline-block lg:mt-0 hover:font-semibold ml-20 link"
       >
         Status
-      </a>
-      <a
-        href="#"
+      </router-link>
+      <router-link
+        to="/Dashboard"
         class="block mt-4 lg:inline-block lg:mt-0 hover:font-semibold ml-20 link"
       >
         Dashboard
-      </a>
+      </router-link>
     </div>
     <div>
-      <a
-        href="#"
+      <router-link
+        to="/Login"
         class="inline-block text-sm px-4 py-2 leading-none rounded text-white bg-blue-500 hover:bg-blue-600"
       >
         Log in
-      </a>
-      <a
-        href="#"
+      </router-link>
+      <router-link
+        to="/Register"
         class="inline-block text-sm px-4 py-2 leading-none rounded text-white bg-blue-500 hover:bg-blue-600 ml-4"
       >
         Register
-      </a>
+      </router-link>
     </div>
   </nav>
 </template>
@@ -68,5 +70,4 @@
   text-decoration: underline; /* Add underline only for hover, focus, and active states */
   margin-bottom: 4px; /* Adjust the gap for the hover, focus, and active states */
 }
-
 </style>

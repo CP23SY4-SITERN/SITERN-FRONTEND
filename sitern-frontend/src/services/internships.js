@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore, acceptHMRUpdate } from 'pinia';
 
 export const internshipsStore = defineStore('internships', () => {
   const internships = ref([]);

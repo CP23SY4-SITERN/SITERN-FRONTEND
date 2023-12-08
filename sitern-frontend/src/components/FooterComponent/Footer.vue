@@ -1,6 +1,5 @@
-
 <template>
-  <footer class="footer">
+  <footer class="footer fixed bottom-0 w-full">
     <div class="container">
       <div class="footer-content">
         <div class="footer-logo">
@@ -30,10 +29,11 @@
 </template>
 
 <style scoped>
+body {
+  margin: 0; /* Remove default margin */
+}
+
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
   background-color: #f5f5f5;
   padding: 20px 0;
 }

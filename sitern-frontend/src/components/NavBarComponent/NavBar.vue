@@ -1,5 +1,5 @@
 <template>
-  <nav class="flex items-center justify-between flex-wrap p-6">
+  <nav class="flex items-center justify-between flex-wrap p-6 bg-white">
     <div class="flex items-center flex-shrink-0 ml-6 mr-20">
       <router-link to="/" class="font-semibold text-4xl tracking-tight">
         SITern

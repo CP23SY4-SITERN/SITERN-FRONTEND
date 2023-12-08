@@ -1,7 +1,7 @@
 <template>
   <nav class="flex items-center justify-between flex-wrap p-6">
     <div class="flex items-center flex-shrink-0 ml-6 mr-20">
-      <router-link to="/" class="font-semibold text-4xl tracking-tight link">
+      <router-link to="/" class="font-semibold text-4xl tracking-tight">
         SITern
       </router-link>
     </div>

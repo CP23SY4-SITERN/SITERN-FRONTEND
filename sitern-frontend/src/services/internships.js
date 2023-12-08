@@ -2,8 +2,8 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 
 export const internshipsStore = defineStore('internships', () => {
   const internships = ref([]);
-  const url = import.meta.env.VITE_API_URL;
-
+  // const url = import.meta.env.VITE_API_URL;
+  const url = "http://localhost:8080/api/jobs";
   const getAllJobs = async () => {
     const res = await fetch(`${url}/users`, {
       method: "GET",
@@ -12,7 +12,7 @@ export const internshipsStore = defineStore('internships', () => {
       },
     });
     if (res.status === 200) {
-      users.value = await res.json();
+      internships.value = await res.json();
     } else if (res.status === 401) {
       let res = await res.json();
       if (

@@ -1,10 +1,10 @@
 <template>
-    <div class="main-container">
-      <div class="container container1">
+    <div class="main-container h-full">
+      <div class="container container1 mx-2">
         <h1 class="text-3xl font-bold">Welcome back!</h1>
       </div>
-      <div class="container container2">
-        <div class="login-box">
+      <div class="container container2 grid content-center">
+        <div class="login-box grid">
           <h1 class="text-3xl font-bold">Login your account</h1>
           <p>Login to your account</p>
           <form @submit="onSubmit">
@@ -18,28 +18,20 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    name: 'Login',
-    data() {
-      return {
-        email: '',
-        password: '',
-      };
-    },
-    methods: {
-      onSubmit(e) {
-        e.preventDefault();
-        // TODO: Submit the login form
-      },
-    },
-  };
+  <script setup>
+  import { ref } from 'vue';
+
+  const email = ref('');
+  const password = ref('');
+
+  function onSubmit() {
+    alert('Form submitted!');
+  }
   </script>
   
   <style scoped>
   .main-container {
     display: flex;
-    height: 100vh; /* Set the height to full viewport height */
   }
   
   .container {
@@ -51,8 +43,8 @@
   .container1 {
     background-color: #fff;
     text-align: center;
-    margin: auto; /* Auto margin centers the element horizontally */
     display: flex;
+    height: 75vh;
     flex-direction: column;
     justify-content: center; /* Center vertically */
   }

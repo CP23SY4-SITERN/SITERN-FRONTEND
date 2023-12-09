@@ -18,4 +18,7 @@ export default defineConfig({
     // Pass environment variables to the client
     'process.env': env,
   },
+  server: {
+    port: 3000,
+  }
 });

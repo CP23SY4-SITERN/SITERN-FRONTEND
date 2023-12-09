@@ -4,14 +4,8 @@
     </div>
   </template>
   
-  <script>
+  <script setup>
   import Login from '../components/LoginComponent/Login.vue';
-  export default {
-    name: 'App',
-    components: {
-      Login,
-    }
-  }
   
   </script>
   

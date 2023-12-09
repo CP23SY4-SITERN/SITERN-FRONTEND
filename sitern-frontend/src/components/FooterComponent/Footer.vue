@@ -1,9 +1,9 @@
 <template>
-  <footer class="footer fixed bottom-0 w-full">
+  <footer class="bottom-0 w-full footer">
     <div class="container">
       <div class="footer-content">
         <div class="footer-logo">
-            <span class="font-semibold text-xl tracking-tight">SITern</span>
+            <span class="text-xl font-semibold tracking-tight">SITern</span>
         </div>
         <div class="footer-links">
           <ul>

@@ -4,7 +4,7 @@
       <InternshipSearchbox @search="handleSearch" />
       <IntershipFilter />
     </div>
-    <div v-if="filteredInternships.length > 0" class="grid grid-cols-3 gap-4">
+    <div v-if="filteredInternships.length > 0" class="grid grid-cols-3 grid-rows-2 gap-4">
       <div v-for="internship in filteredInternships" class="interncard">
         <!-- Favorite Icon -->
         <button class="favorite-icon" @click="toggleFavorite(internship)">
@@ -13,7 +13,7 @@
         </button>
 
         <!-- Internship Details -->
-        <div class="internship-details mt-6">
+        <div class="mt-6 internship-details">
           <h1>{{ internship.title }}</h1>
           <h2>{{ internship.company }}</h2>
           <h3 class="mb-12">{{ internship.position }}</h3>
@@ -25,17 +25,17 @@
         </button>
       </div>
     </div>
-    <div v-else class="grid grid-cols-3 gap-4" >
-      <div><h1 class="text-3xl font-bold mb-4">No Internships Found</h1></div>
+    <div v-else class="grid grid-cols-3 grid-rows-2 gap-4" >
+      <div><h1 class="mb-4 text-3xl font-bold">No Internships Found</h1></div>
     </div>
-    <div class="flex justify-end mr-4 my-4">
+    <div class="flex justify-end my-4 mr-4">
       <button
-        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
+        class="px-4 py-2 font-bold text-gray-800 bg-gray-300 rounded-l hover:bg-gray-400"
       >
         Prev
       </button>
       <button
-        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
+        class="px-4 py-2 font-bold text-gray-800 bg-gray-300 rounded-r hover:bg-gray-400"
       >
         Next
       </button>
@@ -103,7 +103,7 @@ const applyToInternship = (internship) => {
 }
 
 .apply-button {
-  @apply absolute bg-[#3490dc] text-white cursor-pointer px-2.5 py-[5px] rounded-[3px] border-[none] right-2.5 bottom-2.5;
+  @apply absolute bg-blue-500 text-white cursor-pointer px-2.5 py-[5px] rounded-[3px] border-[none] right-2.5 bottom-2.5;
 }
 
 .internship-details {

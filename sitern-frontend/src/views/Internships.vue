@@ -1,27 +1,30 @@
 <template>
-  <div class="container mx-auto relative">
-    <h1 class="text-3xl font-bold mb-4">Internships</h1>
+  <div class="container relative mx-auto">
+    <h1 class="mb-4 text-3xl font-bold">Internships</h1>
     <ul class="flex flex-col gap-4">
       <InternshipCardList :internships="internships" />
     </ul>
 
     <!-- Add Internship Button -->
-    <button @click="toggleAddButtons" class="add-internship-button">
+    <button @click="toggleAddButtons" class="bg-blue-500 add-internship-button">
       Add Internship
     </button>
 
     <!-- Add Company and Post Buttons (conditional) -->
     <div v-if="showAddButtons" class="add-buttons">
-      <button @click="addCompany">Add Company</button>
-      <button @click="postInternship">Post</button>
+      <button class="bg-blue-500" @click="showAddCompanyModal = true">Add Company</button>
+      <button class="bg-blue-500" @click="showAddInternshipModal = true">Post</button>
     </div>
+    <AddCompanyModal :show="showAddCompanyModal" @cancel="handleCancelModal" @addCompany="handleAddCompany"/>
+    <AddInternshipModal :show="showAddInternshipModal" @cancel="handleCancelModal" @addInternship="handleAddInternship"/>
   </div>
 </template>
 <script setup>
 import { ref } from "vue";
 import { internshipsStore } from "../services/internships";
 import InternshipCardList from "../components/InternshipComponent/InternshipCardList.vue";
-
+import AddInternshipModal from "../components/InternshipComponent/AddInternshipModal.vue";
+import AddCompanyModal from "../components/InternshipComponent/AddCompanyModal.vue";
 const internships = [
   {
     id: 1,
@@ -63,22 +66,77 @@ const internships = [
     description: "Description 5",
     link: "Link 5",
   },
+  {
+    id: 4,
+    title: "Internship 4",
+    company: "Company 4",
+    position: "Position 4",
+    description: "Description 4",
+    link: "Link 4",
+  },
+  {
+    id: 5,
+    title: "Internship 5",
+    company: "Company 5",
+    position: "Position 5",
+    description: "Description 5",
+    link: "Link 5",
+  },
+  {
+    id: 4,
+    title: "Internship 4",
+    company: "Company 4",
+    position: "Position 4",
+    description: "Description 4",
+    link: "Link 4",
+  },
+  {
+    id: 5,
+    title: "Internship 5",
+    company: "Company 5",
+    position: "Position 5",
+    description: "Description 5",
+    link: "Link 5",
+  },
+  {
+    id: 4,
+    title: "Internship 4",
+    company: "Company 4",
+    position: "Position 4",
+    description: "Description 4",
+    link: "Link 4",
+  },
+  {
+    id: 5,
+    title: "Internship 5",
+    company: "Company 5",
+    position: "Position 5",
+    description: "Description 5",
+    link: "Link 5",
+  }
 ];
 
 const showAddButtons = ref(false);
+const showAddCompanyModal = ref(false);
+const showAddInternshipModal = ref(false);
+
+const handleAddCompany = (company) => {
+  console.log('Add Company', company);
+};
+
+const handleAddInternship = (company) => {
+  alert('Add Internship', company);
+};
+
+const handleCancelModal = () => {
+  showAddCompanyModal.value = false;
+  showAddInternshipModal.value = false;
+};
 
 const toggleAddButtons = () => {
   showAddButtons.value = !showAddButtons.value;
 };
 
-const addCompany = () => {
-  // Logic to add a company
-  console.log('Add Company');
-};
-const postInternship = () => {
-  // Logic to post an internship
-  console.log('Post Internship');
-};
 </script>
 
 <style scoped>
@@ -86,7 +144,6 @@ const postInternship = () => {
   position: fixed;
   bottom: 140px;
   right: 20px;
-  background-color: #3490dc;
   color: white;
   padding: 10px;
   border: none;
@@ -106,7 +163,6 @@ const postInternship = () => {
 }
 
 .add-buttons button {
-  background-color: #3490dc;
   color: white;
   padding: 10px;
   border: none;

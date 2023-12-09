@@ -1,7 +1,6 @@
 <template>
   <div class="container mx-auto relative">
     <h1 class="text-3xl font-bold mb-4">Internships</h1>
-
     <ul class="flex flex-col gap-4">
       <InternshipCardList :internships="internships" />
     </ul>

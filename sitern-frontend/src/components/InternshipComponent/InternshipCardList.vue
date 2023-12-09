@@ -1,7 +1,11 @@
 <template>
   <div>
-    <div class="grid grid-cols-3 gap-4">
-      <div v-for="internship in myInternships" class="interncard">
+    <div class="flex items-center justify-between">
+      <InternshipSearchbox @search="handleSearch" />
+      <IntershipFilter />
+    </div>
+    <div v-if="filteredInternships.length > 0" class="grid grid-cols-3 gap-4">
+      <div v-for="internship in filteredInternships" class="interncard">
         <!-- Favorite Icon -->
         <button class="favorite-icon" @click="toggleFavorite(internship)">
           <!-- Add your favorite icon here -->
@@ -21,6 +25,9 @@
         </button>
       </div>
     </div>
+    <div v-else class="grid grid-cols-3 gap-4" >
+      <div><h1 class="text-3xl font-bold mb-4">No Internships Found</h1></div>
+    </div>
     <div class="flex justify-end mr-4 my-4">
       <button
         class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
@@ -39,6 +46,11 @@
 <script setup>
 import { computed } from "vue";
 import { ref } from "vue";
+import { defineProps } from "vue";
+import InternshipSearchbox from "./InternshipSearchbox.vue";
+import IntershipFilter from "./InternshipFilter.vue";
+
+const searchValue = ref("");
 
 const props = defineProps({
   internships: {
@@ -58,6 +70,16 @@ const myInternships = computed(() => {
     isFavorite: ref(false), // Add a property to track if it's a favorite
   }));
 });
+
+const filteredInternships = computed(() => {
+  return myInternships.value.filter((internship) =>
+    internship.title.toLowerCase().includes(searchValue.value.toLowerCase())
+  );
+});
+
+const handleSearch = (value) => {
+  searchValue.value = value;
+};
 
 const toggleFavorite = (internship) => {
   internship.isFavorite = !internship.isFavorite;

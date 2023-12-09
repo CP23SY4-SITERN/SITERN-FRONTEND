@@ -1,6 +1,5 @@
 <script setup>
-import Searchbox from "../components/InternshipComponent/InternshipSearchbox.vue";
-import FilterIcon from "../components/InternshipComponent/InternshipFilter.vue";
+import InternshipSearchbox from "../components/InternshipComponent/InternshipSearchbox.vue";
 
 </script>
 
@@ -26,14 +25,10 @@ import FilterIcon from "../components/InternshipComponent/InternshipFilter.vue";
       </div>
       <div class="p-8">
         <div class="flex items-center justify-between">
-          <Searchbox class="searchbox" />
-          <FilterIcon class="filter-icon" />
+          <InternshipSearchbox />
         </div>
       </div>
     </div>
-    <!-- <footer>
-      <Footer />
-    </footer> -->
   </div>
 </template>
 

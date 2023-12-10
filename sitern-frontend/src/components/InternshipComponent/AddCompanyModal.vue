@@ -3,7 +3,7 @@
     v-if="show"
     class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75"
   >
-    <div class="p-4 bg-white rounded-lg sm:w-1/2">
+    <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2">
       <h2 class="mb-4 text-xl font-bold">Add Company</h2>
 
       <form>
@@ -60,7 +60,7 @@
           <button
             type="button"
             class="mr-2 text-sm font-medium text-gray-500 hover:underline"
-            @click="show = false, $emit('cancel', false)"
+            @click="show = false, $emit('cancel', 'showAddCompanyModal')"
           >
             Cancel
           </button>

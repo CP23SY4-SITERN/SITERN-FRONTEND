@@ -1,12 +1,13 @@
+<!-- EditInternshipModal.vue -->
 <template>
   <div
     v-if="show"
     class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75"
   >
-    <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2">
-      <h2 class="mb-4 text-xl font-bold">Add Internship</h2>
+    <div class="p-4 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2">
+      <h2 class="mb-4 text-xl font-bold">Edit Internship</h2>
 
-      <form>
+      <form @submit.prevent="editInternship">
         <div class="flex flex-col mb-4">
           <label for="name" class="mb-2 text-sm font-medium">Title:</label>
           <input
@@ -34,7 +35,7 @@
             >Application Due:</label
           >
           <input
-            type="date"
+            type="text"
             id="applicationDeadline"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.applicationDeadline"
@@ -85,6 +86,7 @@
             id="jobdesc"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.jobDescription"
+            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -96,6 +98,7 @@
             id="jobbenefit"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.jobBenefits"
+            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -105,6 +108,7 @@
             id="link"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.link"
+            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -121,16 +125,13 @@
           <label for="workType" class="mb-2 text-sm font-medium"
             >Work Type:</label
           >
-          <select
+          <input
+            type="text"
             id="workType"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.workType"
             required
-          >
-            <option value="Hybrid">Hybrid</option>
-            <option value="Remote">Remote</option>
-            <option value="Onsite">Onsite</option>
-          </select>
+          />
         </div>
         <div class="flex flex-col mb-4">
           <label for="joblocationid" class="mb-2 text-sm font-medium"
@@ -148,16 +149,15 @@
           <button
             type="button"
             class="mr-2 text-sm font-medium text-gray-500 hover:underline"
-            @click="(show = false), $emit('cancel', 'showAddInternshipModal')"
+            @click="(show = false), $emit('cancel', false)"
           >
             Cancel
           </button>
           <button
-            @click="addInternship()"
             type="submit"
             class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600"
           >
-            Add Internship
+            Save Changes
           </button>
         </div>
       </form>
@@ -168,71 +168,21 @@
 <script setup>
 import { ref } from "vue";
 
-const emit = defineEmits(["addInternship", "cancel"]);
-
 const props = defineProps({
   show: {
     type: Boolean,
     default: false,
   },
+  internship: {
+    type: Object,
+    default: {},
+  },
 });
 
-const internship = ref({
-  title: "",
-  company_ID: "",
-  applicationDeadline: "",
-  position: "",
-  skillNeededList: "",
-  jobRequirement: "",
-  jobDescription: "",
-  jobBenefits: "",
-  link: "",
-  salary: "",
-  workType: "",
-  job_location_ID: "",
-  isActive: "",
-});
+const { emit } = defineEmits(["editInternship", "cancel"]);
 
-const addInternship = () => {
-  // Format the date to match the expected format "yyyy-MM-dd"
-  const formattedDate = new Date(internship.value.applicationDeadline)
-    .toISOString()
-    .split("T")[0];
-
-  const internshipDTO = {
-    title: internship.value.title,
-    company_ID: parseInt(internship.value.company_ID),
-    applicationDeadline: formattedDate,
-    position: internship.value.position,
-    skillNeededList: internship.value.skillNeededList,
-    jobRequirement: internship.value.jobRequirement,
-    jobDescription: internship.value.jobDescription,
-    jobBenefits: internship.value.jobBenefits,
-    link: internship.value.link,
-    salary: parseInt(internship.value.salary),
-    workType: internship.value.workType,
-    job_location_ID: parseInt(internship.value.job_location_ID),
-  };
-  emit("addInternship", internshipDTO);
-  resetForm();
-};
-
-const resetForm = () => {
-  // Reset the form data
-  internship.value = {
-    title: "",
-    company_ID: "",
-    applicationDeadline: "",
-    position: "",
-    skillNeededList: "",
-    jobRequirement: "",
-    jobDescription: "",
-    jobBenefits: "",
-    link: "",
-    salary: "",
-    workType: "",
-    job_location_ID: "",
-    isActive: "",
-  };
+const editInternship = () => {
+  $emit("editInternship", props.internship);
+  props.show = false;
 };
 </script>

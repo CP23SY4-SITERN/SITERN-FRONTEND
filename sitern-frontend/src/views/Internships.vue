@@ -2,7 +2,10 @@
   <div class="container relative mx-auto">
     <h1 class="mb-4 text-3xl font-bold">Internships</h1>
     <ul class="flex flex-col gap-4">
-      <InternshipCardList :internships="internships" />
+      <InternshipCardList
+        :internships="internships"
+        @deleteInternship="deleteInternship"
+      />
     </ul>
 
     <!-- Add Internship Button -->
@@ -12,131 +15,118 @@
 
     <!-- Add Company and Post Buttons (conditional) -->
     <div v-if="showAddButtons" class="add-buttons">
-      <button class="bg-blue-500" @click="showAddCompanyModal = true">Add Company</button>
-      <button class="bg-blue-500" @click="showAddInternshipModal = true">Post</button>
+      <button class="bg-blue-500" @click="showAddCompanyModal = true">
+        Add Company
+      </button>
+      <button class="bg-blue-500" @click="showAddInternshipModal = true">
+        Post
+      </button>
     </div>
-    <AddCompanyModal :show="showAddCompanyModal" @cancel="handleCancelModal" @addCompany="handleAddCompany"/>
-    <AddInternshipModal :show="showAddInternshipModal" @cancel="handleCancelModal" @addInternship="handleAddInternship"/>
+    <AddCompanyModal
+      :show="showAddCompanyModal"
+      @cancel="closeModal"
+      @addCompany="handleAddCompany"
+    />
+    <AddInternshipModal
+      :show="showAddInternshipModal"
+      @cancel="closeModal"
+      @addInternship="handleAddInternship"
+    />
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref, onUpdated } from "vue";
 import { internshipsStore } from "../services/internships";
 import InternshipCardList from "../components/InternshipComponent/InternshipCardList.vue";
 import AddInternshipModal from "../components/InternshipComponent/AddInternshipModal.vue";
 import AddCompanyModal from "../components/InternshipComponent/AddCompanyModal.vue";
-const internships = [
-  {
-    id: 1,
-    title: "Internship 1",
-    company: "Company 1",
-    position: "Position 1",
-    description: "Description 1",
-    link: "Link 1",
-  },
-  {
-    id: 2,
-    title: "Internship 2",
-    company: "Company 2",
-    position: "Position 2",
-    description: "Description 2",
-    link: "Link 2",
-  },
-  {
-    id: 3,
-    title: "Internship 3",
-    company: "Company 3",
-    position: "Position 3",
-    description: "Description 3",
-    link: "Link 3",
-  },
-  {
-    id: 4,
-    title: "Internship 4",
-    company: "Company 4",
-    position: "Position 4",
-    description: "Description 4",
-    link: "Link 4",
-  },
-  {
-    id: 5,
-    title: "Internship 5",
-    company: "Company 5",
-    position: "Position 5",
-    description: "Description 5",
-    link: "Link 5",
-  },
-  {
-    id: 4,
-    title: "Internship 4",
-    company: "Company 4",
-    position: "Position 4",
-    description: "Description 4",
-    link: "Link 4",
-  },
-  {
-    id: 5,
-    title: "Internship 5",
-    company: "Company 5",
-    position: "Position 5",
-    description: "Description 5",
-    link: "Link 5",
-  },
-  {
-    id: 4,
-    title: "Internship 4",
-    company: "Company 4",
-    position: "Position 4",
-    description: "Description 4",
-    link: "Link 4",
-  },
-  {
-    id: 5,
-    title: "Internship 5",
-    company: "Company 5",
-    position: "Position 5",
-    description: "Description 5",
-    link: "Link 5",
-  },
-  {
-    id: 4,
-    title: "Internship 4",
-    company: "Company 4",
-    position: "Position 4",
-    description: "Description 4",
-    link: "Link 4",
-  },
-  {
-    id: 5,
-    title: "Internship 5",
-    company: "Company 5",
-    position: "Position 5",
-    description: "Description 5",
-    link: "Link 5",
-  }
-];
+
+const internshipsService = internshipsStore();
+const internships = ref([]);
+
+onMounted(async () => {
+  refreshInternships();
+});
+
+const refreshInternships = async () => {
+  await internshipsService.getInternships();
+  internships.value = internshipsService.internships;
+};
 
 const showAddButtons = ref(false);
 const showAddCompanyModal = ref(false);
 const showAddInternshipModal = ref(false);
 
 const handleAddCompany = (company) => {
-  console.log('Add Company', company);
+  console.log("Add Company", company);
 };
 
-const handleAddInternship = (company) => {
-  alert('Add Internship', company);
+const deleteInternship = async (id) => {
+  try {
+    await internshipsService.deleteInternship(id);
+    await refreshInternships();
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 };
 
-const handleCancelModal = () => {
-  showAddCompanyModal.value = false;
-  showAddInternshipModal.value = false;
+const handleAddInternship = async (internship) => {
+  // Validate the form fields before proceeding
+  if (!validateForm(internship)) {
+    // Display an error message or handle validation failure
+    return;
+  }
+
+  try {
+    await internshipsService.createInternship(internship);
+    alert("Add Internship", internship);
+    closeModal("showAddInternshipModal");
+    await refreshInternships();
+  } catch (error) {
+    console.error("Error adding internship:", error);
+    // Handle the error as needed
+  }
+};
+
+const validateForm = (internship) => {
+  // Add your validation logic here
+  if (
+    !internship.title ||
+    !internship.company_ID ||
+    !internship.position ||
+    !internship.skillNeededList ||
+    !internship.jobRequirement ||
+    !internship.salary ||
+    !internship.workType ||
+    !internship.job_location_ID
+  ) {
+    // You can customize this condition based on your form requirements
+    alert("Please fill in all required fields.");
+    return false;
+  }
+
+  // You can add more specific validation checks for each field if needed
+
+  return true;
+};
+
+const closeModal = (modalName) => {
+  switch (modalName) {
+    case "showAddInternshipModal":
+      showAddInternshipModal.value = false;
+      break;
+    case "showAddCompanyModal":
+      showAddCompanyModal.value = false;
+      break;
+    default:
+      // Handle the default case (if modalName doesn't match any case)
+      break;
+  }
 };
 
 const toggleAddButtons = () => {
   showAddButtons.value = !showAddButtons.value;
 };
-
 </script>
 
 <style scoped>

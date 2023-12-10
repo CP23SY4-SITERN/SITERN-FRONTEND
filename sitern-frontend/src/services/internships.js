@@ -69,6 +69,49 @@ export const internshipsStore = defineStore('internships', () => {
     }
   };
 
+  async function updateInternship(internship) {
+    try {
+      const res = await fetch(`${url}/jobs/${internship.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: internship.title,
+          applicationDeadline: internship.applicationDeadline,
+          skillNeededList: internship.skillNeededList,
+          jobRequirement: internship.jobRequirement,
+          jobDescription: internship.jobDescription,
+          jobBenefits: internship.jobBenefits,
+          link: internship.link,
+          salary: internship.salary,
+          workType: internship.workType,
+          job_location_id: internship.job_location_id,
+        }),
+      });
+      if (res.status === 200) {
+        alert("Internship updated");
+      } else if (res.status === 401) {
+        const errorResponse = await res.json();
+        if (
+          errorResponse.message
+            .toLowerCase()
+            .includes("please send refresh token to /refresh to refresh token")
+        ) {
+          isLogin.refreshToken();
+        } else {
+          alert("Please login");
+        }
+      } else if (res.status === 403) {
+        alert("You are not authorized to access this page.");
+      } else {
+        console.log("Error, cannot update internship");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  };
+
   async function deleteInternship(id) {
     try {
       const res = await fetch(`${url}/jobs/${id}`, {
@@ -103,6 +146,7 @@ export const internshipsStore = defineStore('internships', () => {
   return {
     getInternships,
     createInternship,
+    updateInternship,
     deleteInternship,
     internships
   };

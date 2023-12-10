@@ -28,6 +28,7 @@
       @addCompany="handleAddCompany"
     />
     <AddInternshipModal
+      :internships="internships"
       :show="showAddInternshipModal"
       @cancel="closeModal"
       @addInternship="handleAddInternship"
@@ -92,7 +93,6 @@ const validateForm = (internship) => {
   // Add your validation logic here
   if (
     !internship.title ||
-    !internship.company_ID ||
     !internship.position ||
     !internship.skillNeededList ||
     !internship.jobRequirement ||

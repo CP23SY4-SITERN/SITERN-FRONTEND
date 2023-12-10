@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="show"
-    class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75"
   >
     <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2">
       <h2 class="mb-4 text-xl font-bold">Add Company</h2>

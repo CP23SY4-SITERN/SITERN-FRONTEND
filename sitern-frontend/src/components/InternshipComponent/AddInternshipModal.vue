@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="show"
-    class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75"
   >
     <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2">
       <h2 class="mb-4 text-xl font-bold">Add Internship</h2>
@@ -19,16 +19,24 @@
         </div>
         <div class="flex flex-col mb-4">
           <label for="company-id" class="mb-2 text-sm font-medium"
-            >Company ID:</label
+            >Company:</label
           >
-          <input
-            type="text"
+          <select
             id="company_id"
             class="p-2 rounded-md shadow-sm focus:outline-none"
-            v-model="internship.company_ID"
+            v-model="selectedCompany"
             required
-          />
+          >
+            <option
+              v-for="company in uniqueCompanies"
+              :key="company.companyName"
+              :value="company.company_ID"
+            >
+              {{ company.companyName }}
+            </option>
+          </select>
         </div>
+
         <div class="flex flex-col mb-4">
           <label for="application-deadline" class="mb-2 text-sm font-medium"
             >Application Due:</label
@@ -166,7 +174,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
 
 const emit = defineEmits(["addInternship", "cancel"]);
 
@@ -174,6 +182,9 @@ const props = defineProps({
   show: {
     type: Boolean,
     default: false,
+  },
+  internships: {
+    type: Array,
   },
 });
 
@@ -193,6 +204,24 @@ const internship = ref({
   isActive: "",
 });
 
+const uniqueCompanies = computed(() => {
+  const companiesMap = new Map();
+
+  props.internships.forEach((internship) => {
+    const { companyName, company_ID } = internship;
+
+    // Use the company name as the key in the Map
+    if (!companiesMap.has(companyName)) {
+      companiesMap.set(companyName, { companyName, company_ID });
+    }
+  });
+
+  // Convert the Map values to an array
+  return Array.from(companiesMap.values());
+});
+
+const selectedCompany = ref("");
+
 const addInternship = () => {
   // Format the date to match the expected format "yyyy-MM-dd"
   const formattedDate = new Date(internship.value.applicationDeadline)
@@ -201,7 +230,7 @@ const addInternship = () => {
 
   const internshipDTO = {
     title: internship.value.title,
-    company_ID: parseInt(internship.value.company_ID),
+    company_ID: selectedCompany.value,
     applicationDeadline: formattedDate,
     position: internship.value.position,
     skillNeededList: internship.value.skillNeededList,
@@ -235,4 +264,19 @@ const resetForm = () => {
     isActive: "",
   };
 };
+
+watch(
+  () => selectedCompany.value,
+  (newCompany) => {
+    // Find the corresponding internship with the selected company name
+    const matchingInternship = props.internships.find(
+      (internship) => internship.companyName === newCompany
+    );
+
+    if (matchingInternship) {
+      // Update the company_ID in the internship object
+      internship.company_ID = matchingInternship.company_ID;
+    }
+  }
+);
 </script>

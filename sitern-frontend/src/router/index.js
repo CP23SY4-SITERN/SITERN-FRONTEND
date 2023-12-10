@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-const history = createWebHistory();
+const history = createWebHistory("/sy4/");
 const routes = [
     {
         path: "/",

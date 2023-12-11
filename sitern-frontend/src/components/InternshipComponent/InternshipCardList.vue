@@ -92,29 +92,38 @@
         </button>
 
         <!-- Internship card info -->
-        <div class="mt-6 mb-12 internship-details" @click="selectAndShowInternshipDetailModal(internship)">
-          <h1>Title: {{ internship.title }}</h1>
-          <h2>Company: {{ internship.company }}</h2>
-          <h3>Position: {{ internship.position }}</h3>
-          <p>Location: {{ internship.jobLocation.country }}</p>
-          <p>Skills Needed: {{ internship.skillNeededList }}</p>
-          <p>Requirements: {{ internship.jobRequirement }}</p>
-          <p>Salary: {{ internship.salary }}</p>
-          <p>Work Type: {{ internship.workType }}</p>
-          <p>
-            Link:
-            <a
-              :href="internship.link"
-              target="_blank"
-              class="text-blue-400 hover:text-blue-600"
-              >{{ internship.link }}</a
-            >
-          </p>
+        <div class="relative mt-6 mb-12 group">
+          <div class="internship-details group-hover:opacity-25">
+            <h1>Title: {{ internship.title }}</h1>
+            <h2>Company: {{ internship.company }}</h2>
+            <h3>Position: {{ internship.position }}</h3>
+            <p>Location: {{ internship.jobLocation.country }}</p>
+            <p>Skills Needed: {{ internship.skillNeededList }}</p>
+            <p>Requirements: {{ internship.jobRequirement }}</p>
+            <p>Salary: {{ internship.salary }}</p>
+            <p>Work Type: {{ internship.workType }}</p>
+            <p>
+              Link:
+              <a
+                :href="internship.link"
+                target="_blank"
+                class="text-blue-400 hover:text-blue-600"
+                >{{ internship.link }}</a
+              >
+            </p>
+          </div>
+          <div
+            class="absolute inset-0 flex items-center justify-center text-white transition-opacity duration-300 bg-gray-800 opacity-0 group-hover:opacity-50"
+            @click="selectAndShowInternshipDetailModal(internship)"
+          >
+            <p>More details</p>
+          </div>
         </div>
         <InternshipDetailModal
           :show="showInternshipDetail"
           :internship="selectedInternship"
           @close="closeInternshipDetailModal"
+          @editInternship="handleEditInternship"
         />
         <button class="delete-button" @click="deleteInternship(internship.id)">
           Delete
@@ -151,7 +160,6 @@ import IntershipFilter from "./InternshipFilter.vue";
 import InternshipDetailModal from "./InternshipDetailModal.vue";
 
 const searchValue = ref("");
-const showEditModal = ref(false);
 let internshipIdToDelete = ref(null);
 const selectedInternship = ref({});
 const showInternshipDetail = ref(false);
@@ -227,6 +235,10 @@ const handleSearch = (value) => {
 const hideDeleteModal = () => {
   // Hide the delete modal
   deleteModal.value.classList.add("hidden");
+};
+
+const handleEditInternship = (internship) => {
+  emit("editInternship", internship);
 };
 
 const confirmDelete = () => {

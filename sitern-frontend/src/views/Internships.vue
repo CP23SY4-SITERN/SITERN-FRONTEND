@@ -5,6 +5,7 @@
       <InternshipCardList
         :internships="internships"
         @deleteInternship="deleteInternship"
+        @editInternship="editInternship"
       />
     </ul>
 
@@ -29,6 +30,7 @@
     />
     <AddInternshipModal
       :internships="internships"
+      :companies="companies"
       :show="showAddInternshipModal"
       @cancel="closeModal"
       @addInternship="handleAddInternship"
@@ -41,12 +43,16 @@ import { internshipsStore } from "../services/internships";
 import InternshipCardList from "../components/InternshipComponent/InternshipCardList.vue";
 import AddInternshipModal from "../components/InternshipComponent/AddInternshipModal.vue";
 import AddCompanyModal from "../components/CompanyComponent/AddCompanyModal.vue";
+import { companyStore } from "../services/company";
 
 const internshipsService = internshipsStore();
+const companyService = companyStore();
 const internships = ref([]);
+const companies = ref([]);
 
 onMounted(async () => {
   refreshInternships();
+  refreshCompanies();
 });
 
 const refreshInternships = async () => {
@@ -54,12 +60,39 @@ const refreshInternships = async () => {
   internships.value = internshipsService.internships;
 };
 
+const refreshCompanies = async () => {
+  await companyService.getCompanies();
+  companies.value = companyService.companies;
+};
+
 const showAddButtons = ref(false);
 const showAddCompanyModal = ref(false);
 const showAddInternshipModal = ref(false);
 
-const handleAddCompany = (company) => {
-  console.log("Add Company", company);
+const handleAddCompany = async (company) => {
+  // Validate the form fields before proceeding
+  if (validateForm(company, "company") == false) {
+    // Display an error message or handle validation failure
+    return;
+  }
+
+  try {
+    await companyService.addCompany(company);
+    alert("Add Company", company);
+    closeModal("showAddCompanyModal");
+    await refreshCompanies();
+  } catch (error) {
+    console.error("Error adding internship:", error);
+  }
+};
+
+const editInternship = async (internship) => {
+  try {
+    await internshipsService.updateInternship(internship);
+    await refreshInternships();
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 };
 
 const deleteInternship = async (id) => {
@@ -73,7 +106,7 @@ const deleteInternship = async (id) => {
 
 const handleAddInternship = async (internship) => {
   // Validate the form fields before proceeding
-  if (!validateForm(internship)) {
+  if (!validateForm(internship, "internship")) {
     // Display an error message or handle validation failure
     return;
   }
@@ -89,25 +122,30 @@ const handleAddInternship = async (internship) => {
   }
 };
 
-const validateForm = (internship) => {
+const validateForm = (data, type) => {
   // Add your validation logic here
-  if (
-    !internship.title ||
-    !internship.position ||
-    !internship.skillNeededList ||
-    !internship.jobRequirement ||
-    !internship.salary ||
-    !internship.workType ||
-    !internship.job_location_ID
-  ) {
+
+  const isInternship = type === "internship";
+  const requiredFields = isInternship
+    ? ["title", "position", "skillNeededList", "jobRequirement", "salary", "workType", "job_location_ID"]
+    : ["companyName", "companyDescription", "companyLocation", "companyWebsite", "companyEmployee"];
+
+  if (!checkRequiredFields(data, requiredFields)) {
     // You can customize this condition based on your form requirements
-    alert("Please fill in all required fields.");
+    alert(`Please fill in all required ${isInternship ? 'internship' : 'company'} fields.`);
     return false;
   }
 
   // You can add more specific validation checks for each field if needed
 
   return true;
+};
+
+const checkRequiredFields = (data, fields) => {
+  return fields.every(field => {
+    const nestedFields = field.split('.');
+    return nestedFields.reduce((obj, key) => obj && obj[key], data);
+  });
 };
 
 const closeModal = (modalName) => {

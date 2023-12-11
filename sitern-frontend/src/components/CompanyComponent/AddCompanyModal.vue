@@ -1,14 +1,34 @@
 <template>
   <div
     v-if="show"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-50"
   >
     <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2">
+      <div class="flex items-center justify-end space-x-2">
+        <button
+          @click="(show = false), $emit('cancel', 'showAddCompanyModal')"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            width="25"
+            height="25"
+            viewBox="0 0 72 72"
+          >
+            <path
+              d="M 19 15 C 17.977 15 16.951875 15.390875 16.171875 16.171875 C 14.609875 17.733875 14.609875 20.266125 16.171875 21.828125 L 30.34375 36 L 16.171875 50.171875 C 14.609875 51.733875 14.609875 54.266125 16.171875 55.828125 C 16.951875 56.608125 17.977 57 19 57 C 20.023 57 21.048125 56.609125 21.828125 55.828125 L 36 41.65625 L 50.171875 55.828125 C 51.731875 57.390125 54.267125 57.390125 55.828125 55.828125 C 57.391125 54.265125 57.391125 51.734875 55.828125 50.171875 L 41.65625 36 L 55.828125 21.828125 C 57.390125 20.266125 57.390125 17.733875 55.828125 16.171875 C 54.268125 14.610875 51.731875 14.609875 50.171875 16.171875 L 36 30.34375 L 21.828125 16.171875 C 21.048125 15.391875 20.023 15 19 15 z"
+            ></path>
+          </svg>
+        </button>
+      </div>
       <h2 class="mb-4 text-xl font-bold">Add Company</h2>
 
       <form>
         <div class="flex flex-col mb-4">
-          <label for="name" class="mb-2 text-sm font-medium">Company Name:</label>
+          <label for="name" class="mb-2 text-sm font-medium"
+            >Company Name:</label
+          >
           <input
             type="text"
             id="name"
@@ -18,7 +38,9 @@
           />
         </div>
         <div class="flex flex-col mb-4">
-          <label for="description" class="mb-2 text-sm font-medium">Company Description:</label>
+          <label for="description" class="mb-2 text-sm font-medium"
+            >Company Description:</label
+          >
           <input
             type="text"
             id="description"
@@ -37,17 +59,70 @@
           />
         </div>
         <div class="flex flex-col mb-4">
-          <label for="location" class="mb-2 text-sm font-medium">Company Location:</label>
-          <input
-            type="text"
-            id="location"
-            class="p-2 rounded-md shadow-sm focus:outline-none"
-            v-model="company.companyLocation"
-            required
-          />
+          <label class="mb-2 font-bold text-md">Company Information</label>
+          <div class="flex flex-col mb-4">
+            <label for="road" class="mb-2 text-sm font-medium">Road:</label>
+            <input
+              type="text"
+              id="road"
+              class="p-2 rounded-md shadow-sm focus:outline-none"
+              v-model="company.companyLocation.road"
+              required
+            />
+          </div>
+          <div class="flex flex-col mb-4">
+            <label for="subDistrict" class="mb-2 text-sm font-medium"
+              >Sub District:</label
+            >
+            <input
+              type="text"
+              id="subDistrict"
+              class="p-2 rounded-md shadow-sm focus:outline-none"
+              v-model="company.companyLocation.subDistrict"
+              required
+            />
+          </div>
+          <div class="flex flex-col mb-4">
+            <label for="province" class="mb-2 text-sm font-medium"
+              >Province:</label
+            >
+            <input
+              type="text"
+              id="province"
+              class="p-2 rounded-md shadow-sm focus:outline-none"
+              v-model="company.companyLocation.province"
+              required
+            />
+          </div>
+          <div class="flex flex-col mb-4">
+            <label for="country" class="mb-2 text-sm font-medium"
+              >Country:</label
+            >
+            <input
+              type="text"
+              id="country"
+              class="p-2 rounded-md shadow-sm focus:outline-none"
+              v-model="company.companyLocation.country"
+              required
+            />
+          </div>
+          <div class="flex flex-col mb-4">
+            <label for="zipcode" class="mb-2 text-sm font-medium"
+              >Zipcode:</label
+            >
+            <input
+              type="text"
+              id="zipcode"
+              class="p-2 rounded-md shadow-sm focus:outline-none"
+              v-model="company.companyLocation.zipcode"
+              required
+            />
+          </div>
         </div>
         <div class="flex flex-col mb-4">
-          <label for="employees" class="mb-2 text-sm font-medium">Number of employees:</label>
+          <label for="employees" class="mb-2 text-sm font-medium"
+            >Number of employees:</label
+          >
           <input
             type="number"
             id="employees"
@@ -60,7 +135,7 @@
           <button
             type="button"
             class="mr-2 text-sm font-medium text-gray-500 hover:underline"
-            @click="show = false, $emit('cancel', 'showAddCompanyModal')"
+            @click="(show = false), $emit('cancel', 'showAddCompanyModal')"
           >
             Cancel
           </button>
@@ -78,9 +153,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 
-const emit = defineEmits(['addCompany', 'cancel']);
+const emit = defineEmits(["addCompany", "cancel"]);
 
 const props = defineProps({
   show: {
@@ -90,10 +165,16 @@ const props = defineProps({
 });
 
 const company = ref({
-  companyName: '',
-  companyDescription: '',
-  companyWebsite: '',
-  companyLocation: '',
+  companyName: "",
+  companyDescription: "",
+  companyWebsite: "",
+  companyLocation: {
+    road: "",
+    subDistrict: "",
+    province: "",
+    country: "",
+    zipcode: "",
+  },
   companyEmployee: 0,
 });
 
@@ -102,19 +183,25 @@ const addCompany = () => {
     companyName: company.value.companyName,
     companyDescription: company.value.companyDescription,
     companyWebsite: company.value.companyWebsite,
-    companyLocation: company.value.companyLocation,
+    companyLocation: `${company.value.companyLocation.road}, ${company.value.companyLocation.subDistrict}, ${company.value.companyLocation.province}, ${company.value.companyLocation.country}, ${company.value.companyLocation.zipcode}`,
     companyEmployee: company.value.companyEmployee,
   };
-  emit('addCompany', companyDTO);
+  emit("addCompany", companyDTO);
   resetForm();
 };
 
 const resetForm = () => {
   company.value = {
-    companyName: '',
-    companyDescription: '',
-    companyWebsite: '',
-    companyLocation: '',
+    companyName: "",
+    companyDescription: "",
+    companyWebsite: "",
+    companyLocation: {
+      road: "",
+      subDistrict: "",
+      province: "",
+      country: "",
+      zipcode: "",
+    },
     companyEmployee: 0,
   };
 };

@@ -40,7 +40,7 @@ import { onMounted, ref, onUpdated } from "vue";
 import { internshipsStore } from "../services/internships";
 import InternshipCardList from "../components/InternshipComponent/InternshipCardList.vue";
 import AddInternshipModal from "../components/InternshipComponent/AddInternshipModal.vue";
-import AddCompanyModal from "../components/InternshipComponent/AddCompanyModal.vue";
+import AddCompanyModal from "../components/CompanyComponent/AddCompanyModal.vue";
 
 const internshipsService = internshipsStore();
 const internships = ref([]);

@@ -2,7 +2,7 @@
 <template>
   <div
     v-if="show"
-    class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75"
   >
     <div class="p-4 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2">
       <h2 class="mb-4 text-xl font-bold">Edit Internship</h2>
@@ -15,7 +15,6 @@
             id="title"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.title"
-            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -27,7 +26,6 @@
             id="company_id"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.company_ID"
-            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -50,7 +48,6 @@
             id="position"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.position"
-            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -62,7 +59,6 @@
             id="skillsneed"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.skillNeededList"
-            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -74,7 +70,6 @@
             id="jobrequirement"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.jobRequirement"
-            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -86,7 +81,6 @@
             id="jobdesc"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.jobDescription"
-            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -98,7 +92,6 @@
             id="jobbenefit"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.jobBenefits"
-            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -108,7 +101,6 @@
             id="link"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.link"
-            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -118,7 +110,6 @@
             id="salary"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.salary"
-            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -130,7 +121,6 @@
             id="workType"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.workType"
-            required
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -142,14 +132,13 @@
             id="joblocationid"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.job_location_ID"
-            required
           />
         </div>
         <div class="flex justify-end">
           <button
             type="button"
             class="mr-2 text-sm font-medium text-gray-500 hover:underline"
-            @click="(show = false), $emit('cancel', false)"
+            @click="(show = false), $emit('cancel')"
           >
             Cancel
           </button>
@@ -179,10 +168,10 @@ const props = defineProps({
   },
 });
 
-const { emit } = defineEmits(["editInternship", "cancel"]);
+const emit = defineEmits(["editInternship", "cancel"]);
 
 const editInternship = () => {
-  $emit("editInternship", props.internship);
+  emit("editInternship", props.internship);
   props.show = false;
 };
 </script>

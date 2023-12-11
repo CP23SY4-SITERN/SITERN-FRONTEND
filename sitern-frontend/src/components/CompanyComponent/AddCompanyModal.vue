@@ -67,6 +67,7 @@
           <button
             type="submit"
             class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600"
+            @click="addCompany"
           >
             Add Company
           </button>
@@ -79,7 +80,7 @@
 <script setup>
 import { ref } from 'vue';
 
-defineEmits(['addCompany', 'cancel']);
+const emit = defineEmits(['addCompany', 'cancel']);
 
 const props = defineProps({
   show: {
@@ -89,14 +90,32 @@ const props = defineProps({
 });
 
 const company = ref({
-  name: '',
-  website: '',
+  companyName: '',
+  companyDescription: '',
+  companyWebsite: '',
+  companyLocation: '',
+  companyEmployee: 0,
 });
 
 const addCompany = () => {
-  $emit('addCompany', company.value);
-  props.show = false;
-  company.value = { name: '', website: '' };
+  const companyDTO = {
+    companyName: company.value.companyName,
+    companyDescription: company.value.companyDescription,
+    companyWebsite: company.value.companyWebsite,
+    companyLocation: company.value.companyLocation,
+    companyEmployee: company.value.companyEmployee,
+  };
+  emit('addCompany', companyDTO);
+  resetForm();
 };
 
+const resetForm = () => {
+  company.value = {
+    companyName: '',
+    companyDescription: '',
+    companyWebsite: '',
+    companyLocation: '',
+    companyEmployee: 0,
+  };
+};
 </script>

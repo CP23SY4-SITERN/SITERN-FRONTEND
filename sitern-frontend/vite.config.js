@@ -14,6 +14,7 @@ const env = dotenv.config({
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  base: '/sy4/',
   define: {
     // Pass environment variables to the client
     'process.env': env,

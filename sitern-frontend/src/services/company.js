@@ -4,7 +4,7 @@ import { ref } from "vue";
 export const companyStore = defineStore("companies", () => {
   const companies = ref([]);
   // const url = import.meta.env.VITE_API_URL;
-  const url = "http://10.4.85.44:8080/api";
+  const url = "https://capstone23.sit.kmutt.ac.th/sy4/api";
 
     async function getCompanies() {
     try {

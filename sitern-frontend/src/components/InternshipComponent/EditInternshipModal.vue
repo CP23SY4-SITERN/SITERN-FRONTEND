@@ -58,17 +58,6 @@
           />
         </div>
         <div class="flex flex-col mb-4">
-          <label for="position" class="mb-2 text-sm font-medium"
-            >Position:</label
-          >
-          <input
-            type="text"
-            id="position"
-            class="p-2 rounded-md shadow-sm focus:outline-none"
-            v-model="internship.position"
-          />
-        </div>
-        <div class="flex flex-col mb-4">
           <label for="skillsneed" class="mb-2 text-sm font-medium"
             >Skill Needed List:</label
           >
@@ -191,7 +180,6 @@ const internship = ref({
   title: "",
   company_ID: "",
   applicationDeadline: "",
-  position: "",
   skillNeededList: "",
   jobRequirement: "",
   jobDescription: "",

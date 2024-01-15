@@ -208,7 +208,8 @@ const props = defineProps({
     type: Array,
   },
 });
-
+const isTitleValid = ref(false);
+const isCompanyValid = ref(false);
 const internship = ref({
   title: "",
   company_ID: "",
@@ -286,6 +287,22 @@ const resetForm = () => {
   };
 };
 
+const validateForm = () => {
+      isTitleValid = this.internship.title.trim().length >= 1;
+      isCompanyValid = !!this.selectedCompany;
+      
+      return this.isTitleValid && this.isCompanyValid;
+    }
+
+const submitForm = () => {
+      if (this.validateForm()) {
+        // Submit your form logic here
+        console.log('Form submitted successfully!');
+      } else {
+        console.log('Form validation failed. Please check the fields.');
+      }
+    }
+    
 watch(
   () => selectedCompany.value,
   (newCompany) => {

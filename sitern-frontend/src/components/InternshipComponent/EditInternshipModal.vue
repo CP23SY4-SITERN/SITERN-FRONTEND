@@ -1,14 +1,9 @@
 <!-- EditInternshipModal.vue -->
 <template>
-  <div
-    v-if="show"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-50"
-  >
-    <div class="p-4 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2">
+  <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-50">
+    <div class="p-4 overflow-y-auto bg-white rounded-lg max-h-[50rem] sm:w-1/2">
       <div class="flex items-center justify-end space-x-2">
-        <button
-          @click="(show = false), $emit('cancel')"
-        >
+        <button @click="closeModal">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             x="0px"
@@ -25,17 +20,17 @@
       </div>
       <h2 class="mb-4 text-xl font-bold">Edit Internship</h2>
 
-      <form>
-        <div class="flex flex-col mb-4">
-          <label for="name" class="mb-2 text-sm font-medium">Title:</label>
-          <input
-            type="text"
-            id="title"
-            class="p-2 rounded-md shadow-sm focus:outline-none"
-            v-model="internship.title"
-          />
-        </div>
-        <div class="flex flex-col mb-4">
+      <!-- Pages -->
+      <template v-if="currentPage === 1">
+        <!-- Page 1: General Information -->
+        <form @submit.prevent="submitPageOne">
+          <!-- Fields for Page 1 -->
+          <div class="flex flex-col mb-4">
+            <label for="title" class="mb-2 text-sm font-medium">Title:</label>
+            <input type="text" id="title" class="p-2 rounded-md shadow-sm focus:outline-none" v-model="internship.title" :placeholder="props.internship.title" />
+          </div>
+          <!-- Add more fields for Page 1 as needed -->
+          <div class="flex flex-col mb-4">
           <label for="company-id" class="mb-2 text-sm font-medium"
             >Company ID:</label
           >
@@ -44,6 +39,7 @@
             id="company_id"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.company_ID"
+            :placeholder="props.internship.company_ID"
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -55,6 +51,7 @@
             id="applicationDeadline"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.applicationDeadline"
+            :placeholder="props.internship.applicationDeadline"
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -66,20 +63,27 @@
             id="skillsneed"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.skillNeededList"
+            :placeholder="props.internship.skillNeededList"
           />
         </div>
-        <div class="flex flex-col mb-4">
-          <label for="jobrequirement" class="mb-2 text-sm font-medium"
-            >Job requirement:</label
-          >
-          <input
-            type="text"
-            id="jobrequirement"
-            class="p-2 rounded-md shadow-sm focus:outline-none"
-            v-model="internship.jobRequirement"
-          />
-        </div>
-        <div class="flex flex-col mb-4">
+          <!-- Navigation buttons -->
+          <div class="flex justify-end">
+            <button type="button" @click="closeModal" class="mr-2 text-sm font-medium text-gray-500 hover:underline">Cancel</button>
+            <button type="button" @click="nextPage" class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600">Next</button>
+          </div>
+        </form>
+      </template>
+
+      <template v-else-if="currentPage === 2">
+        <!-- Page 2: Additional Information -->
+        <form @submit.prevent="editInternship">
+          <!-- Fields for Page 2 -->
+          <div class="flex flex-col mb-4">
+            <label for="jobRequirement" class="mb-2 text-sm font-medium">Job Requirement:</label>
+            <input type="text" id="jobRequirement" class="p-2 rounded-md shadow-sm focus:outline-none" v-model="internship.jobRequirement" :placeholder="props.internship.jobRequirement" />
+          </div>
+          <!-- Add more fields for Page 2 as needed -->
+          <div class="flex flex-col mb-4">
           <label for="jobdesc" class="mb-2 text-sm font-medium"
             >Job Description:</label
           >
@@ -88,6 +92,7 @@
             id="jobdesc"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.jobDescription"
+            :placeholder="props.internship.jobDescription"
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -99,6 +104,7 @@
             id="jobbenefit"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.jobBenefits"
+            :placeholder="props.internship.jobBenefits"
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -108,6 +114,7 @@
             id="link"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.link"
+            :placeholder="props.internship.link"
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -117,6 +124,7 @@
             id="salary"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.salary"
+            :placeholder="props.internship.salary"
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -128,6 +136,7 @@
             id="workType"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.workType"
+            :placeholder="props.internship.workType"
           />
         </div>
         <div class="flex flex-col mb-4">
@@ -139,25 +148,16 @@
             id="joblocationid"
             class="p-2 rounded-md shadow-sm focus:outline-none"
             v-model="internship.job_location_ID"
+            :placeholder="props.internship.job_location_ID"
           />
         </div>
-        <div class="flex justify-end">
-          <button
-            type="button"
-            class="mr-2 text-sm font-medium text-gray-500 hover:underline"
-            @click="(show = false), $emit('cancel')"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            @click="editInternship"
-            class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600"
-          >
-            Save Changes
-          </button>
-        </div>
-      </form>
+          <!-- Navigation buttons -->
+          <div class="flex justify-end">
+            <button type="button" @click="prevPage" class="mr-2 text-sm font-medium text-gray-500 hover:underline">Back</button>
+            <button type="submit" class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600">Save Changes</button>
+          </div>
+        </form>
+      </template>
     </div>
   </div>
 </template>
@@ -165,6 +165,7 @@
 <script setup>
 import { ref } from "vue";
 
+const emit = defineEmits(["editInternship", "cancel"]);
 const props = defineProps({
   show: {
     type: Boolean,
@@ -177,20 +178,37 @@ const props = defineProps({
 });
 
 const internship = ref({
-  title: "",
-  company_ID: "",
-  applicationDeadline: "",
-  skillNeededList: "",
-  jobRequirement: "",
-  jobDescription: "",
-  jobBenefits: "",
-  link: "",
-  salary: "",
-  workType: "",
-  job_location_ID: "",
+  title: props.internship.title || "",
+  company_ID: props.internship.company_ID || "",
+  applicationDeadline: props.internship.applicationDeadline || "",
+  skillNeededList: props.internship.skillNeededList || "",
+  jobRequirement: props.internship.jobRequirement || "",
+  jobDescription: props.internship.jobDescription || "",
+  jobBenefits: props.internship.jobBenefits || "",
+  link: props.internship.link || "",
+  salary: props.internship.salary ||"",
+  workType: props.internship.workType || "",
+  job_location_ID: props.internship.job_location_ID ||"",
 });
 
-const emit = defineEmits(["editInternship", "cancel"]);
+const currentPage = ref(1);
+
+const nextPage = () => {
+  currentPage.value++;
+};
+
+const prevPage = () => {
+  currentPage.value--;
+};
+
+const closeModal = () => {
+  currentPage.value = 1;
+  emit("cancel");
+};
+
+const submitPageOne = () => {
+  nextPage();
+};
 
 const editInternship = () => {
   // Create a copy of props.internship
@@ -208,4 +226,5 @@ const editInternship = () => {
   // Emit the edited internship object
   emit("editInternship", internshipEdit);
 };
+
 </script>

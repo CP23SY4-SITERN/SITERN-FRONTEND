@@ -1,6 +1,10 @@
 <template>
   <div>
-    <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-50" @click="closeModal">
+    <div
+      v-if="showModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-50"
+      @click="closeModal"
+    >
       <div
         class="p-4 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2"
       >
@@ -76,7 +80,6 @@ import { ref, watch } from "vue";
 import EditInternshipModal from "./EditInternshipModal.vue";
 import { internshipsStore } from "../../services/internships.js";
 
-const internshipsService  = internshipsStore();
 const emit = defineEmits(["close", "editInternship"]);
 const props = defineProps({
   show: {
@@ -89,6 +92,7 @@ const props = defineProps({
 });
 const showModal = ref(props.show);
 const showEditModal = ref(false);
+const internshipsService = internshipsStore();
 
 const toggleEditModal = () => {
   showEditModal.value = !showEditModal.value;
@@ -107,16 +111,16 @@ const handleCancelModal = () => {
   showEditModal.value = false;
 };
 
+const closeModal = () => {
+  showModal.value = false;
+  // Emit an event to inform the parent component that the modal is closed
+  emit("close");
+};
+
 watch(
   () => props.show,
   (value) => {
     showModal.value = value;
   }
 );
-
-const closeModal = () => {
-  showModal.value = false;
-  // Emit an event to inform the parent component that the modal is closed
-  emit("close");
-};
 </script>

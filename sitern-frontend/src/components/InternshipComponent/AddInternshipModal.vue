@@ -1,13 +1,9 @@
+<!-- AddInternshipModal.vue -->
 <template>
-  <div
-    v-if="show"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-50"
-  >
-    <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2">
+  <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-50">
+    <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[50rem] sm:w-1/2">
       <div class="flex items-center justify-end space-x-2">
-        <button
-          @click="(show = false), $emit('cancel', 'showAddInternshipModal')"
-        >
+        <button @click="closeModal">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             x="0px"
@@ -22,42 +18,26 @@
           </svg>
         </button>
       </div>
-      <h2 class="mb-4 text-xl font-bold">Add Internship</h2>
+      <h2 class="mb-4 text-xl font-bold">{{ currentPage === 1 ? "Add Internship" : "Add Internship" }}</h2>
 
-      <form>
-        <div class="flex flex-col mb-4">
-          <label for="name" class="mb-2 text-sm font-medium">Title:</label>
-          <input
-            type="text"
-            id="title"
-            class="p-2 rounded-md shadow-sm focus:outline-none"
-            v-model="internship.title"
-            required
-          />
-        </div>
-        <div class="flex flex-col mb-4">
-          <label for="company-id" class="mb-2 text-sm font-medium"
-            >Company:</label
-          >
-          <select
-            id="company_id"
-            class="p-2 rounded-md shadow-sm focus:outline-none"
-            v-model="selectedCompany"
-            required
-          >
-            <option
-              v-for="company in uniqueCompanies"
-              :key="company.companyName"
-              :value="company.id"
-            >
-              {{ company.companyName }}
-            </option>
-          </select>
-        </div>
-
-        <div class="flex flex-col mb-4">
+      <form @submit.prevent="currentPage === 1 ? submitPageOne : addInternship">
+        <template v-if="currentPage === 1">
+          <!-- Page 1: General Information -->
+          <div class="flex flex-col mb-4">
+            <label for="title" class="mb-2 text-sm font-medium">Title <span class="text-red-500">*</span> :</label>
+            <input type="text" id="title" class="p-2 rounded-md shadow-sm focus:outline-none" v-model="internship.title" required />
+          </div>
+          <!-- Add more fields for Page 1 as needed -->
+          <div class="flex flex-col mb-4">
+            <label for="company-id" class="mb-2 text-sm font-medium">Company <span class="text-red-500">*</span> :</label>
+            <select id="company_id" class="p-2 rounded-md shadow-sm focus:outline-none" v-model="selectedCompany" required>
+              <option v-for="company in uniqueCompanies" :key="company.companyName" :value="company.id">{{ company.companyName }}</option>
+            </select>
+          </div>
+          <!-- More form fields for Page 1 -->
+          <div class="flex flex-col mb-4">
           <label for="application-deadline" class="mb-2 text-sm font-medium"
-            >Application Due:</label
+            >Application Due <span class="text-red-500">*</span> :</label
           >
           <input
             type="date"
@@ -68,7 +48,7 @@
         </div>
         <div class="flex flex-col mb-4">
           <label for="position" class="mb-2 text-sm font-medium"
-            >Position:</label
+            >Position <span class="text-red-500">*</span> :</label
           >
           <input
             type="text"
@@ -80,7 +60,7 @@
         </div>
         <div class="flex flex-col mb-4">
           <label for="skillsneed" class="mb-2 text-sm font-medium"
-            >Skill Needed List:</label
+            >Skill Needed List <span class="text-red-500">*</span> :</label
           >
           <input
             type="text"
@@ -90,19 +70,20 @@
             required
           />
         </div>
-        <div class="flex flex-col mb-4">
-          <label for="jobrequirement" class="mb-2 text-sm font-medium"
-            >Job requirement:</label
-          >
-          <input
-            type="text"
-            id="jobrequirement"
-            class="p-2 rounded-md shadow-sm focus:outline-none"
-            v-model="internship.jobRequirement"
-            required
-          />
-        </div>
-        <div class="flex flex-col mb-4">
+          <div class="flex justify-end">
+            <button type="button" @click="closeModal" class="mr-2 text-sm font-medium text-gray-500 hover:underline">Cancel</button>
+            <button type="button" @click="nextPage" class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600">Next</button>
+          </div>
+        </template>
+
+        <template v-else-if="currentPage === 2">
+          <!-- Page 2: Additional Information -->
+          <div class="flex flex-col mb-4">
+            <label for="jobrequirement" class="mb-2 text-sm font-medium">Job Requirement <span class="text-red-500">*</span> :</label>
+            <input type="text" id="jobrequirement" class="p-2 rounded-md shadow-sm focus:outline-none" v-model="internship.jobRequirement" required />
+          </div>
+          <!-- Add more fields for Page 2 as needed -->
+          <div class="flex flex-col mb-4">
           <label for="jobdesc" class="mb-2 text-sm font-medium"
             >Job Description:</label
           >
@@ -134,7 +115,9 @@
           />
         </div>
         <div class="flex flex-col mb-4">
-          <label for="salary" class="mb-2 text-sm font-medium">Salary:</label>
+          <label for="salary" class="mb-2 text-sm font-medium"
+            >Salary <span class="text-red-500">*</span> :</label
+          >
           <input
             type="number"
             id="salary"
@@ -145,7 +128,7 @@
         </div>
         <div class="flex flex-col mb-4">
           <label for="workType" class="mb-2 text-sm font-medium"
-            >Work Type:</label
+            >Work Type <span class="text-red-500">*</span> :</label
           >
           <select
             id="workType"
@@ -160,7 +143,7 @@
         </div>
         <div class="flex flex-col mb-4">
           <label for="joblocationid" class="mb-2 text-sm font-medium"
-            >Job Location ID:</label
+            >Job Location ID <span class="text-red-500">*</span> :</label
           >
           <input
             type="number"
@@ -170,32 +153,21 @@
             required
           />
         </div>
-        <div class="flex justify-end">
-          <button
-            type="button"
-            class="mr-2 text-sm font-medium text-gray-500 hover:underline"
-            @click="(show = false), $emit('cancel', 'showAddInternshipModal')"
-          >
-            Cancel
-          </button>
-          <button
-            @click="addInternship()"
-            type="submit"
-            class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600"
-          >
-            Add Internship
-          </button>
-        </div>
+          <!-- Navigation buttons -->
+          <div class="flex justify-end">
+            <button type="button" @click="prevPage" class="mr-2 text-sm font-medium text-gray-500 hover:underline">Back</button>
+            <button type="submit" class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600">Add Internship</button>
+          </div>
+        </template>
       </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from 'vue';
 
 const emit = defineEmits(["addInternship", "cancel"]);
-
 const props = defineProps({
   show: {
     type: Boolean,
@@ -208,8 +180,11 @@ const props = defineProps({
     type: Array,
   },
 });
+
 const isTitleValid = ref(false);
 const isCompanyValid = ref(false);
+const currentPage = ref(1);
+const selectedCompany = ref("");
 const internship = ref({
   title: "",
   company_ID: "",
@@ -242,30 +217,53 @@ const uniqueCompanies = computed(() => {
   return Array.from(companiesMap.values());
 });
 
-const selectedCompany = ref("");
+const nextPage = () => {
+  currentPage.value++;
+};
+
+const prevPage = () => {
+  currentPage.value--;
+};
+
+const closeModal = () => {
+  currentPage.value = 1;
+  emit("cancel", "showAddInternshipModal");
+};
+
+const submitPageOne = () => {
+  if (validateForm()) {
+    // Handle form submission logic for Page 1
+    nextPage();
+  } else {
+    console.log("Page 1 validation failed. Please check the fields.");
+  }
+};
 
 const addInternship = () => {
-  // Format the date to match the expected format "yyyy-MM-dd"
-  const formattedDate = new Date(internship.value.applicationDeadline)
-    .toISOString()
-    .split("T")[0];
+  if (validateForm()) {
+    // Format the date to match the expected format "yyyy-MM-dd"
+    const formattedDate = new Date(internship.value.applicationDeadline).toISOString().split("T")[0];
 
-  const internshipDTO = {
-    title: internship.value.title,
-    company_ID: selectedCompany.value,
-    applicationDeadline: formattedDate,
-    position: internship.value.position,
-    skillNeededList: internship.value.skillNeededList,
-    jobRequirement: internship.value.jobRequirement,
-    jobDescription: internship.value.jobDescription,
-    jobBenefits: internship.value.jobBenefits,
-    link: internship.value.link,
-    salary: parseInt(internship.value.salary),
-    workType: internship.value.workType,
-    job_location_ID: parseInt(internship.value.job_location_ID),
-  };
-  emit("addInternship", internshipDTO);
-  resetForm();
+    const internshipDTO = {
+      title: internship.value.title,
+      company_ID: selectedCompany.value,
+      applicationDeadline: formattedDate,
+      position: internship.value.position,
+      skillNeededList: internship.value.skillNeededList,
+      jobRequirement: internship.value.jobRequirement,
+      jobDescription: internship.value.jobDescription,
+      jobBenefits: internship.value.jobBenefits,
+      link: internship.value.link,
+      salary: parseInt(internship.value.salary),
+      workType: internship.value.workType,
+      job_location_ID: parseInt(internship.value.job_location_ID),
+    };
+    emit("addInternship", internshipDTO);
+    resetForm();
+  } else {
+    // Display an alert when form validation fails
+    alert("Please fill in all required fields.");
+  }
 };
 
 const resetForm = () => {
@@ -288,33 +286,9 @@ const resetForm = () => {
 };
 
 const validateForm = () => {
-      isTitleValid = this.internship.title.trim().length >= 1;
-      isCompanyValid = !!this.selectedCompany;
-      
-      return this.isTitleValid && this.isCompanyValid;
-    }
+  isTitleValid.value = internship.value.title.trim().length >= 1;
+  isCompanyValid.value = !!selectedCompany.value;
 
-const submitForm = () => {
-      if (this.validateForm()) {
-        // Submit your form logic here
-        console.log('Form submitted successfully!');
-      } else {
-        console.log('Form validation failed. Please check the fields.');
-      }
-    }
-    
-watch(
-  () => selectedCompany.value,
-  (newCompany) => {
-    // Find the corresponding internship with the selected company name
-    const matchingInternship = props.internships.find(
-      (internship) => internship.companyName === newCompany
-    );
-
-    if (matchingInternship) {
-      // Update the company_ID in the internship object
-      internship.company_ID = matchingInternship.company_ID;
-    }
-  }
-);
+  return isTitleValid.value && isCompanyValid.value;
+};
 </script>

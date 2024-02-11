@@ -125,9 +125,7 @@
           @close="closeInternshipDetailModal"
           @editInternship="handleEditInternship"
         />
-        <button class="delete-button" @click="deleteInternship(internship.id)">
-          Delete
-        </button>
+        <DeleteButton class="right-20 bottom-2.5" @click="deleteInternship(internship.id)"/>
         <!-- Apply Button -->
         <button class="apply-button" @click="applyToInternship(internship)">
           Apply
@@ -153,17 +151,27 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import InternshipSearchbox from "./InternshipSearchbox.vue";
 import IntershipFilter from "./InternshipFilter.vue";
 import InternshipDetailModal from "./InternshipDetailModal.vue";
+import DeleteButton from "../ButtonComponent/DeleteButton.vue";
+
+const emit = defineEmits(["editInternship", "deleteInternship", "cancel"]);
+const props = defineProps({
+  internships: {
+    type: Array,
+    default: [],
+  },
+});
 
 const searchValue = ref("");
 let internshipIdToDelete = ref(null);
 const selectedInternship = ref({});
 const showInternshipDetail = ref(false);
-
+const deleteModal = ref(null);
+const router = useRouter();
 const selectInternship = (internship) => {
   selectedInternship.value = internship;
 };
@@ -180,14 +188,6 @@ const showInternshipDetailModal = () => {
 const closeInternshipDetailModal = () => {
   showInternshipDetail.value = false;
 };
-
-const emit = defineEmits(["editInternship", "deleteInternship", "cancel"]);
-const props = defineProps({
-  internships: {
-    type: Array,
-    default: [],
-  },
-});
 
 const myInternships = computed(() => {
   return props.internships.map((element) => ({
@@ -208,20 +208,20 @@ const myInternships = computed(() => {
 });
 
 const filteredInternships = computed(() => {
+  const searchQuery = router.currentRoute.value.meta.searchQuery || "";
   return myInternships.value.filter(
     (internship) =>
       internship.title
         .toLowerCase()
-        .includes(searchValue.value.toLowerCase()) ||
+        .includes(searchQuery.toLowerCase()) ||
       internship.company
         .toLowerCase()
-        .includes(searchValue.value.toLowerCase()) ||
+        .includes(searchQuery.toLowerCase()) ||
       internship.position
         .toLowerCase()
-        .includes(searchValue.value.toLowerCase())
+        .includes(searchQuery.toLowerCase())
   );
 });
-const deleteModal = ref(null);
 
 const deleteInternship = (id) => {
   internshipIdToDelete = id;
@@ -256,6 +256,22 @@ const applyToInternship = (internship) => {
   // Add logic for applying to the internship
   console.log(`Applied to ${internship.title}`);
 };
+
+// Watch for changes in searchValue
+watch(searchValue, (newSearchValue) => {
+  // Check if the route is 'Internships'
+  if (router.currentRoute.value.name === 'Internships') {
+    // Perform the search with the new search value
+    handleSearch(newSearchValue);
+  }
+});
+
+onBeforeRouteUpdate((to, from, next) => {
+  // Reset the search value when navigating to a different route
+  
+  next();
+});
+
 </script>
 
 <style>

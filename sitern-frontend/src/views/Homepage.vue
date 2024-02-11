@@ -7,7 +7,7 @@ import InternshipSearchbox from "../components/InternshipComponent/InternshipSea
   <div class="flex flex-col">
     <div class="flex-grow">
       <div class="flex items-center p-8">
-        <h1 class="text-9xl font-bold mr-20">
+        <h1 class="mr-20 font-bold text-9xl">
           Find your desired <br />
           Internship Job
         </h1>

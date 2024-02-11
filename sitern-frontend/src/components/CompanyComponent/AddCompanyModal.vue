@@ -3,11 +3,9 @@
     v-if="show"
     class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-50"
   >
-    <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2">
+    <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[50rem] sm:w-1/2">
       <div class="flex items-center justify-end space-x-2">
-        <button
-          @click="(show = false), $emit('cancel', 'showAddCompanyModal')"
-        >
+        <button @click="(show = false), $emit('cancel', 'showAddCompanyModal')">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             x="0px"
@@ -22,9 +20,13 @@
           </svg>
         </button>
       </div>
-      <h2 class="mb-4 text-xl font-bold">Add Company</h2>
+      <h2 class="mb-4 text-xl font-bold">
+        {{
+          currentPage === 1 ? "Add Company - Page 1" : "Add Company - Page 2"
+        }}
+      </h2>
 
-      <form>
+      <form v-if="currentPage === 1" @submit.prevent="submitFormPage1">
         <div class="flex flex-col mb-4">
           <label for="name" class="mb-2 text-sm font-medium"
             >Company Name:</label
@@ -58,6 +60,26 @@
             v-model="company.companyWebsite"
           />
         </div>
+
+        <div class="flex justify-end">
+          <button
+            type="button"
+            class="mr-2 text-sm font-medium text-gray-500 hover:underline"
+            @click="(show = false), $emit('cancel', 'showAddCompanyModal')"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            @click="currentPage++"
+            class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600"
+          >
+            Next
+          </button>
+        </div>
+      </form>
+
+      <form v-else @submit.prevent="submitFormPage2">
         <div class="flex flex-col mb-4">
           <label class="mb-2 font-bold text-md">Company Information</label>
           <div class="flex flex-col mb-4">
@@ -131,18 +153,18 @@
             required
           />
         </div>
+
         <div class="flex justify-end">
           <button
             type="button"
             class="mr-2 text-sm font-medium text-gray-500 hover:underline"
-            @click="(show = false), $emit('cancel', 'showAddCompanyModal')"
+            @click="currentPage--"
           >
-            Cancel
+            Back
           </button>
           <button
             type="submit"
             class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600"
-            @click="addCompany"
           >
             Add Company
           </button>
@@ -156,14 +178,14 @@
 import { ref } from "vue";
 
 const emit = defineEmits(["addCompany", "cancel"]);
-
 const props = defineProps({
   show: {
     type: Boolean,
     default: false,
   },
 });
-
+const totalPages = ref(2);
+const currentPage = ref(1);
 const company = ref({
   companyName: "",
   companyDescription: "",
@@ -178,16 +200,27 @@ const company = ref({
   companyEmployee: 0,
 });
 
-const addCompany = () => {
-  const companyDTO = {
-    companyName: company.value.companyName,
-    companyDescription: company.value.companyDescription,
-    companyWebsite: company.value.companyWebsite,
-    companyLocation: `${company.value.companyLocation.road}, ${company.value.companyLocation.subDistrict}, ${company.value.companyLocation.province}, ${company.value.companyLocation.country}, ${company.value.companyLocation.zipcode}`,
-    companyEmployee: company.value.companyEmployee,
-  };
-  emit("addCompany", companyDTO);
-  resetForm();
+const submitFormPage1 = () => {
+  // Handle form submission logic for Page 1
+  console.log("Page 1 submitted successfully!");
+  currentPage.value++;
+};
+
+const submitFormPage2 = () => {
+  // Handle form submission logic for Page 2
+  if (validateForm()) {
+    const companyDTO = {
+      companyName: company.value.companyName,
+      companyDescription: company.value.companyDescription,
+      companyWebsite: company.value.companyWebsite,
+      companyLocation: `${company.value.companyLocation.road}, ${company.value.companyLocation.subDistrict}, ${company.value.companyLocation.province}, ${company.value.companyLocation.country}, ${company.value.companyLocation.zipcode}`,
+      companyEmployee: company.value.companyEmployee,
+    };
+    emit("addCompany", companyDTO);
+    resetForm();
+  } else {
+    alert("Please fill in all required fields.");
+  }
 };
 
 const resetForm = () => {
@@ -204,5 +237,20 @@ const resetForm = () => {
     },
     companyEmployee: 0,
   };
+};
+
+const validateForm = () => {
+  // Add validation logic for Page 2 fields
+  // For example: Check if required fields are filled
+  return (
+    company.value.companyName.trim().length > 0 &&
+    company.value.companyDescription.trim().length > 0 &&
+    company.value.companyLocation.road.trim().length > 0 &&
+    company.value.companyLocation.subDistrict.trim().length > 0 &&
+    company.value.companyLocation.province.trim().length > 0 &&
+    company.value.companyLocation.country.trim().length > 0 &&
+    company.value.companyLocation.zipcode.trim().length > 0 &&
+    company.value.companyEmployee > 0
+  );
 };
 </script>

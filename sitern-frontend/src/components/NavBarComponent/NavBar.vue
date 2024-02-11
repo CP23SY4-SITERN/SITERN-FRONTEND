@@ -34,21 +34,22 @@
     <div>
       <router-link
         to="/Login"
-        class="inline-block px-4 py-2 text-sm leading-none text-white bg-blue-500 rounded hover:bg-blue-600"
       >
-        Log in
+        <login-button/>
       </router-link>
       <router-link
         to="/Register"
-        class="inline-block px-4 py-2 ml-4 text-sm leading-none text-white bg-blue-500 rounded hover:bg-blue-600"
       >
-        Register
+        <register-button/>
       </router-link>
     </div>
   </nav>
 </template>
 
 <script setup>
+import LoginButton from '../ButtonComponent/LoginButton.vue';
+import RegisterButton from '../ButtonComponent/RegisterButton.vue';
+
 </script>
 
 <style scoped>

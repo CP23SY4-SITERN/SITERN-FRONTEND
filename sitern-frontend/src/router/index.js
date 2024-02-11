@@ -1,43 +1,74 @@
+// Import necessary dependencies
 import { createRouter, createWebHistory } from "vue-router";
 
+// Import your components
+import Homepage from "../views/Homepage.vue";
+import Dashboard from "../views/Dashboard.vue";
+import Internships from "../views/Internships.vue";
+import Status from "../views/Status.vue";
+import Profile from "../views/Profile.vue";
+import Login from "../views/Login.vue";
+import NotFound from "../views/NotFound.vue";
+
+// Create router history
 const history = createWebHistory("/sy4/");
+
+// Define routes
 const routes = [
     {
         path: "/",
         name: "Home",
-        component: () => import("../views/Homepage.vue"),
+        component: Homepage,
     },
     {
         path: "/dashboard",
         name: "Dashboard",
-        component: () => import("../views/Dashboard.vue"),
+        component: Dashboard,
     },
     {
         path: "/internships",
         name: "Internships",
-        component: () => import("../views/Internships.vue"),
+        component: Internships,
     },
     {
         path: "/status",
         name: "Status",
-        component: () => import("../views/Status.vue"),
+        component: Status,
     },
     {
         path: "/profile",
         name: "Profile",
-        component: () => import("../views/Profile.vue"),
+        component: Profile,
     },
     {
         path: "/login",
         name: "Login",
-        component: () => import("../views/Login.vue"),
+        component: Login,
     },
     {
         path: "/:catchNotMatchPath(.*)",
         name: "NotFound",
-        component: () => import("../views/NotFound.vue"),
+        component: NotFound,
     },
-]
+];
 
-const router = createRouter({ history, routes });
+// Create router instance
+const router = createRouter({
+    history,
+    routes,
+});
+
+// Navigation guard to handle search query
+router.beforeEach((to, from, next) => {
+    // Check if the route has a search query parameter
+    if (to.query.search) {
+        // If so, set it in the route's meta field
+        to.meta.searchQuery = to.query.search;
+    }
+
+    // Continue with the navigation
+    next();
+});
+
+// Export the router
 export default router;

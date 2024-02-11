@@ -10,19 +10,25 @@
     </ul>
 
     <!-- Add Internship Button -->
-    <button @click="toggleAddButtons" class="bg-blue-500 add-internship-button">
+    <button
+      v-show="!isPageScrolling && !isSomethingToggled"
+      @click="toggleAddButtons"
+      class="bg-blue-500 add-internship-button"
+    >
       Add Internship
     </button>
 
     <!-- Add Company and Post Buttons (conditional) -->
-    <div v-if="showAddButtons" class="add-buttons">
-      <button class="bg-blue-500" @click="showAddCompanyModal = true">
-        Add Company
-      </button>
-      <button class="bg-blue-500" @click="showAddInternshipModal = true">
-        Post
-      </button>
-    </div>
+    <transition name="fade">
+      <div v-show="showAddButtons" class="add-buttons">
+        <button class="bg-blue-500" @click="showAddCompanyModal = true">
+          Add Company
+        </button>
+        <button class="bg-blue-500" @click="showAddInternshipModal = true">
+          Post
+        </button>
+      </div>
+    </transition>
     <AddCompanyModal
       :show="showAddCompanyModal"
       @cancel="closeModal"
@@ -38,7 +44,7 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref, onUpdated } from "vue";
+import { onMounted, ref, onUpdated, watch } from "vue";
 import { internshipsStore } from "../services/internships";
 import InternshipCardList from "../components/InternshipComponent/InternshipCardList.vue";
 import AddInternshipModal from "../components/InternshipComponent/AddInternshipModal.vue";
@@ -49,6 +55,11 @@ const internshipsService = internshipsStore();
 const companyService = companyStore();
 const internships = ref([]);
 const companies = ref([]);
+const showAddButtons = ref(false);
+const showAddCompanyModal = ref(false);
+const showAddInternshipModal = ref(false);
+const isPageScrolling = ref(false);
+const isSomethingToggled = ref(false);
 
 onMounted(async () => {
   refreshInternships();
@@ -64,10 +75,6 @@ const refreshCompanies = async () => {
   await companyService.getCompanies();
   companies.value = companyService.companies;
 };
-
-const showAddButtons = ref(false);
-const showAddCompanyModal = ref(false);
-const showAddInternshipModal = ref(false);
 
 const handleAddCompany = async (company) => {
   // Validate the form fields before proceeding
@@ -127,12 +134,30 @@ const validateForm = (data, type) => {
 
   const isInternship = type === "internship";
   const requiredFields = isInternship
-    ? ["title", "position", "skillNeededList", "jobRequirement", "salary", "workType", "job_location_ID"]
-    : ["companyName", "companyDescription", "companyLocation", "companyWebsite", "companyEmployee"];
+    ? [
+        "title",
+        "position",
+        "skillNeededList",
+        "jobRequirement",
+        "salary",
+        "workType",
+        "job_location_ID",
+      ]
+    : [
+        "companyName",
+        "companyDescription",
+        "companyLocation",
+        "companyWebsite",
+        "companyEmployee",
+      ];
 
   if (!checkRequiredFields(data, requiredFields)) {
     // You can customize this condition based on your form requirements
-    alert(`Please fill in all required ${isInternship ? 'internship' : 'company'} fields.`);
+    alert(
+      `Please fill in all required ${
+        isInternship ? "internship" : "company"
+      } fields.`
+    );
     return false;
   }
 
@@ -142,8 +167,8 @@ const validateForm = (data, type) => {
 };
 
 const checkRequiredFields = (data, fields) => {
-  return fields.every(field => {
-    const nestedFields = field.split('.');
+  return fields.every((field) => {
+    const nestedFields = field.split(".");
     return nestedFields.reduce((obj, key) => obj && obj[key], data);
   });
 };
@@ -165,6 +190,22 @@ const closeModal = (modalName) => {
 const toggleAddButtons = () => {
   showAddButtons.value = !showAddButtons.value;
 };
+
+// Listen for scroll events to update isPageScrolling
+window.addEventListener("scroll", () => {
+  isPageScrolling.value = true;
+});
+
+// Watch changes in showAddButtons to handle fade animation
+watch(
+  () => showAddButtons.value,
+  (newValue) => {
+    if (!newValue) {
+      // Delay setting isPageScrolling to false to allow fade-out animation
+      setTimeout(() => (isPageScrolling.value = false), 1000);
+    }
+  }
+);
 </script>
 
 <style scoped>
@@ -172,6 +213,18 @@ const toggleAddButtons = () => {
   position: fixed;
   bottom: 140px;
   right: 20px;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1; /* Adjust the z-index */
+  opacity: 1;
+  transition: opacity 1s;
+}
+.add-buttons button {
+  opacity: 1;
+  transition: opacity 1s;
   color: white;
   padding: 10px;
   border: none;
@@ -190,12 +243,13 @@ const toggleAddButtons = () => {
   z-index: 1; /* Adjust the z-index */
 }
 
-.add-buttons button {
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  z-index: 1; /* Adjust the z-index */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

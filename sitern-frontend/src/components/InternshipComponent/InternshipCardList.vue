@@ -151,7 +151,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import InternshipSearchbox from "./InternshipSearchbox.vue";
 import IntershipFilter from "./InternshipFilter.vue";

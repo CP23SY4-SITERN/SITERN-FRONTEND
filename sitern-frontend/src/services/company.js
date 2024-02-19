@@ -3,11 +3,40 @@ import { ref } from "vue";
 
 export const companyStore = defineStore("companies", () => {
   const companies = ref([]);
+  const HTTP_STATUS = {
+    OK: 200,
+    CREATED: 201,
+    NO_CONTENT: 204,
+    BAD_REQUEST: 400,
+    UNAUTHORIZED: 401,
+    FORBIDDEN: 403,
+    NOT_FOUND: 404,
+    INTERNAL_SERVER_ERROR: 500,
+  };
   // const url = import.meta.env.VITE_API_URL;
   // const url = "https://capstone23.sit.kmutt.ac.th/sy4/api";
   const url = "http://localhost:8080/api";
 
-    async function getCompanies() {
+  async function handleResponse(res) {
+    if (res.status === HTTP_STATUS.UNAUTHORIZED) {
+      const errorResponse = await res.json();
+      if (
+        errorResponse.message
+          .toLowerCase()
+          .includes("please send refresh token to /refresh to refresh token")
+      ) {
+        isLogin.refreshToken();
+      } else {
+        alert("Please login");
+      }
+    } else if (res.status === HTTP_STATUS.FORBIDDEN) {
+      alert("You are not authorized to access this page.");
+    } else {
+      console.log("Error, cannot get data");
+    }
+  }
+
+  async function getCompanies() {
     try {
       const res = await fetch(`${url}/companies`, {
         method: "GET",
@@ -15,28 +44,15 @@ export const companyStore = defineStore("companies", () => {
           "Content-Type": "application/json",
         },
       });
-      if (res.status === 200) {
+      if (res.status === HTTP_STATUS.OK) {
         companies.value = await res.json();
-      } else if (res.status === 401) {
-        const errorResponse = await res.json();
-        if (
-          errorResponse.message
-            .toLowerCase()
-            .includes("please send refresh token to /refresh to refresh token")
-        ) {
-          isLogin.refreshToken();
-        } else {
-          alert("Please login");
-        }
-      } else if (res.status === 403) {
-        alert("You are not authorized to access this page.");
       } else {
-        console.log("Error, cannot get data");
+        handleResponse(res);
       }
     } catch (error) {
       console.error("An error occurred:", error);
     }
-    }
+  }
 
   async function addCompany(company) {
     try {
@@ -47,23 +63,10 @@ export const companyStore = defineStore("companies", () => {
         },
         body: JSON.stringify(company),
       });
-      if (res.status === 201) {
+      if (res.status === HTTP_STATUS.CREATED) {
         alert("Company created");
-      } else if (res.status === 401) {
-        const errorResponse = await res.json();
-        if (
-          errorResponse.message
-            .toLowerCase()
-            .includes("please send refresh token to /refresh to refresh token")
-        ) {
-          isLogin.refreshToken();
-        } else {
-          alert("Please login");
-        }
-      } else if (res.status === 403) {
-        alert("You are not authorized to access this page.");
       } else {
-        console.log("Error, cannot get data");
+        handleResponse(res);
       }
     } catch (error) {
       console.error("An error occurred:", error);

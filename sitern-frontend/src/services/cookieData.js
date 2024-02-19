@@ -1,7 +1,7 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 // use Pinia to help store data
 
-export const cookieData = defineStore("cookieDataState", () => {
+export const cookieData = defineStore("cookieData", () => {
   // cookie function src from: w3school
   function setCookie(cname, cvalue, exdays) {
     const d = new Date();

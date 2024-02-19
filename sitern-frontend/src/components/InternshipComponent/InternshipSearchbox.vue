@@ -28,7 +28,7 @@ const thisSearchValue = ref("");
 
 const handleSearch = async () => {
   await router.push({
-    name: "Internships",
+    name: "internships",
     query: { search: thisSearchValue.value },
   });
 

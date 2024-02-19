@@ -51,22 +51,17 @@ export const internshipsStore = defineStore("internships", () => {
     }
   }
 
-  async function fetchJson(url, options) {
-    const res = await fetch(url, options);
-    if (res.ok) {
-      return await res.json();
-    } else {
-      handleResponse(res);
-    }
-  }
-
   async function getInternships() {
     try {
-      const data = await fetchJson(`${url}/jobs`, {
+      const res = await fetch(`${url}/jobs`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      internships.value = data;
+      if (res.status === HTTP_STATUS.OK) {
+        internships.value = await res.json();
+      } else {
+        handleResponse(res);
+      }
     } catch (error) {
       console.error("An error occurred:", error);
     }
@@ -74,13 +69,13 @@ export const internshipsStore = defineStore("internships", () => {
 
   async function createInternship(internship) {
     try {
-      const data = await fetchJson(`${url}/jobs`, {
+      const res = await fetch(`${url}/jobs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(internship),
       });
 
-      if (data) {
+      if (res.status === HTTP_STATUS.CREATED) {
         alert("Internship created");
       }
     } catch (error) {
@@ -90,14 +85,16 @@ export const internshipsStore = defineStore("internships", () => {
 
   async function updateInternship(internship) {
     try {
-      const data = await fetchJson(`${url}/jobs/${internship.id}`, {
+      const res = await fetch(`${url}/jobs/${internship.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildInternshipObject(internship)),
       });
 
-      if (data) {
+      if (res.status === HTTP_STATUS.OK) {
         alert("Internship updated");
+      } else {
+        handleResponse(res);
       }
     } catch (error) {
       console.error(`An error occurred: ${error.message}`, error);
@@ -106,13 +103,15 @@ export const internshipsStore = defineStore("internships", () => {
 
   async function deleteInternship(id) {
     try {
-      const data = await fetchJson(`${url}/jobs/${id}`, {
+      const res = await fetch(`${url}/jobs/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       });
 
-      if (data) {
+      if (res.status === HTTP_STATUS.OK) {
         console.log("Internship deleted");
+      } else {
+        handleResponse(res);
       }
     } catch (error) {
       console.error(`An error occurred: ${error.message}`, error);

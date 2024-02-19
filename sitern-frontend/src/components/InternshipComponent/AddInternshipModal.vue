@@ -156,7 +156,7 @@
           <!-- Navigation buttons -->
           <div class="flex justify-end">
             <button type="button" @click="prevPage" class="mr-2 text-sm font-medium text-gray-500 hover:underline">Back</button>
-            <button type="submit" class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600">Add Internship</button>
+            <button type="submit" @click="addInternship" class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600">Add Internship</button>
           </div>
         </template>
       </form>

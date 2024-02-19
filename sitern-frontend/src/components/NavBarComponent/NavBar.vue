@@ -31,7 +31,7 @@
         Dashboard
       </router-link>
     </div>
-    <div>
+    <div v-if="isLogin === false">
       <router-link
         to="/Login"
       >
@@ -43,12 +43,29 @@
         <register-button/>
       </router-link>
     </div>
+    <div v-else-if="isLogin === true">
+      <span class="mr-5">Hi, {{ loginService.loginUser.email }} </span>
+      <button class="inline-block px-4 py-2 text-sm leading-none text-white bg-blue-500 rounded hover:bg-blue-600" @click="logout">Logout</button>
+    </div>
   </nav>
 </template>
 
 <script setup>
 import LoginButton from '../ButtonComponent/LoginButton.vue';
 import RegisterButton from '../ButtonComponent/RegisterButton.vue';
+import { loginStore } from "../../services/loginData.js";
+import { computed } from "vue";
+
+const loginService = loginStore();
+const isLogin = computed(() => loginService.isLogin);
+const logout = async () => {
+  try {
+    await loginService.logout();
+  } catch (error) {
+    console.error("An error occurred:", error);
+    alert("Logout failed. Please try again.");
+  }
+};
 
 </script>
 

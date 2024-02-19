@@ -1,13 +1,13 @@
 <template>
-    <div class="main-container h-full">
-      <div class="container container1 mx-2">
+    <div class="h-full main-container">
+      <div class="container mx-2 container1">
         <h1 class="text-3xl font-bold">Welcome back!</h1>
       </div>
-      <div class="container container2 grid content-center">
-        <div class="login-box grid">
+      <div class="container grid content-center container2">
+        <div class="grid login-box">
           <h1 class="text-3xl font-bold">Login your account</h1>
           <p>Login to your account</p>
-          <form @submit="onSubmit">
+          <form @submit.prevent="onSubmit">
             <input type="email" v-model="email" placeholder="Email">
             <input type="password" v-model="password" placeholder="Password">
             <button type="submit">Login</button>
@@ -20,12 +20,14 @@
   
   <script setup>
   import { ref } from 'vue';
+  
+  const emit = defineEmits(['submit']);
 
   const email = ref('');
   const password = ref('');
 
   function onSubmit() {
-    alert('Form submitted!');
+    emit('submit', { email: email.value, password: password.value });
   }
   </script>
   
@@ -62,6 +64,7 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    margin-bottom: 5px;
   }
   
   input:focus {

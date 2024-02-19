@@ -7,7 +7,8 @@ export const loginStore = defineStore("loginData", () => {
   const cookie = cookieData();
   const isLogin = ref(false);
   const loginUser = ref({ name: "Guest", role: "Guest", email: "" });
-  const url = "http://localhost:8080/api";
+  // const url = "http://localhost:8080/api";
+  const url = "https://capstone23.sit.kmutt.ac.th/sy4/api";
   const HTTP_STATUS = {
     OK: 200,
     CREATED: 201,
@@ -122,7 +123,7 @@ export const loginStore = defineStore("loginData", () => {
       });
       if (res.status === HTTP_STATUS.CREATED) {
         alert("Register completed");
-      }else{
+      } else {
         handleResponse(res);
       }
     } catch (error) {
@@ -135,7 +136,7 @@ export const loginStore = defineStore("loginData", () => {
       const res = await fetch(`${url}/auth/logout`, {
         method: "GET",
         headers: {
-          Authorization: "Bearer " + cookie.getCookie("refreshToken")
+          Authorization: "Bearer " + cookie.getCookie("refreshToken"),
         },
       });
       if (res.status === HTTP_STATUS.OK) {

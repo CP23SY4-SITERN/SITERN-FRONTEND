@@ -14,8 +14,8 @@ export const companyStore = defineStore("companies", () => {
     INTERNAL_SERVER_ERROR: 500,
   };
   // const url = import.meta.env.VITE_API_URL;
-  // const url = "https://capstone23.sit.kmutt.ac.th/sy4/api";
-  const url = "http://localhost:8080/api";
+  const url = "https://capstone23.sit.kmutt.ac.th/sy4/api";
+  // const url = "http://localhost:8080/api";
 
   async function handleResponse(res) {
     if (res.status === HTTP_STATUS.UNAUTHORIZED) {

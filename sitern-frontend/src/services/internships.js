@@ -4,8 +4,8 @@ import { ref } from "vue";
 export const internshipsStore = defineStore("internships", () => {
   const internships = ref([]);
   // const url = import.meta.env.VITE_API_URL;
-  // const url = "https://capstone23.sit.kmutt.ac.th/sy4/api";
-  const url = "http://localhost:8080/api";
+  const url = "https://capstone23.sit.kmutt.ac.th/sy4/api";
+  // const url = "http://localhost:8080/api";
   const HTTP_STATUS = {
     OK: 200,
     CREATED: 201,

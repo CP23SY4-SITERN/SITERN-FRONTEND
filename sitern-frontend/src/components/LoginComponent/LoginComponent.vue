@@ -31,6 +31,17 @@ const clearForm = () => {
   password.value = "";
 };
 
+function emailValidate() {
+  let regx =
+    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+  if (email.value.match(regx)) {
+    return true;
+  } else {
+    alert("Sorry! Incorrect Email Address");
+    return false;
+  }
+}
+
 function onSubmit() {
   emit("submit", { email: email.value, password: password.value });
   clearForm();

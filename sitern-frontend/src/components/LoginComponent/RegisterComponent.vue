@@ -16,92 +16,105 @@
         </div>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  
-  const emit = defineEmits(['submit']);
-  
-  const email = ref('');
-  const password = ref('');
-  const username = ref('');
-  // Add more fields for registration
+  </div>
+</template>
 
-  const resetFields = () => {
-    email.value = '';
-    password.value = '';
-    username.value = '';
-  };
-  
-  const onSubmit = () => {
-    emit('submit', { email: email.value, password: password.value, username: username.value});
-    resetFields();
-  };
+<script setup>
+import { ref } from "vue";
 
-  
-  </script>
-  
-  <style scoped>
-  /* Your CSS styles for registration component */
-  .main-container {
-    display: flex;
+const emit = defineEmits(["submit"]);
+
+const email = ref("");
+const password = ref("");
+const username = ref("");
+// Add more fields for registration
+
+const resetFields = () => {
+  email.value = "";
+  password.value = "";
+  username.value = "";
+};
+
+const onSubmit = () => {
+  emit("submit", {
+    email: email.value,
+    password: password.value,
+    username: username.value,
+  });
+  resetFields();
+};
+
+function emailValidate() {
+  let regx =
+    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+  if (email.value.match(regx)) {
+    return true;
+  } else {
+    alert("Sorry! Incorrect Email Address");
+    return false;
   }
-  
-  .container {
-    width: 50%;
-    padding: 20px;
-    border-radius: 10px;
-  }
-  
-  .container1 {
-    background-color: #fff;
-    text-align: center;
-    display: flex;
-    height: 75vh;
-    flex-direction: column;
-    justify-content: center; /* Center vertically */
-  }
-  
-  .container2 {
-    background-color: #f2f2f2;
-  }
-  
-  form {
-    margin-top: 20px;
-  }
-  
-  input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 5px;
-  }
-  
-  input:focus {
-    outline: none;
-    border-color: #42b983;
-  }
-  
-  button {
-    width: 100%;
-    padding: 10px;
-    background-color: #42b983;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #52c497;
-  }
-  
-  .forgot-password {
-    text-align: right;
-    margin-top: 10px;
-    color: #ccc;
-  }
-  </style>
-  
+}
+</script>
+
+<style scoped>
+/* Your CSS styles for registration component */
+.main-container {
+  display: flex;
+}
+
+.container {
+  width: 50%;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.container1 {
+  background-color: #fff;
+  text-align: center;
+  display: flex;
+  height: 75vh;
+  flex-direction: column;
+  justify-content: center; /* Center vertically */
+}
+
+.container2 {
+  background-color: #f2f2f2;
+}
+
+form {
+  margin-top: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #42b983;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #42b983;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #52c497;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: 10px;
+  color: #ccc;
+}
+</style>

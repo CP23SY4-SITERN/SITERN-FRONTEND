@@ -127,7 +127,6 @@ const handleAddInternship = async (internship) => {
     await refreshInternships();
   } catch (error) {
     console.error("Error adding internship:", error);
-    // Handle the error as needed
   }
 };
 

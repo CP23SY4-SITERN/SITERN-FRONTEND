@@ -5,7 +5,7 @@
   >
     <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[50rem] sm:w-1/2">
       <div class="flex items-center justify-end space-x-2">
-        <button @click="(show = false), $emit('cancel', 'showAddCompanyModal')">
+        <button @click="(show = false), (currentPage = 1), $emit('cancel', 'showAddCompanyModal')">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             x="0px"
@@ -29,7 +29,7 @@
       <form v-if="currentPage === 1" @submit.prevent="submitFormPage1">
         <div class="flex flex-col mb-4">
           <label for="name" class="mb-2 text-sm font-medium"
-            >Company Name:</label
+            >Company Name: <span class="text-red-500">*</span></label
           >
           <input
             type="text"
@@ -41,7 +41,7 @@
         </div>
         <div class="flex flex-col mb-4">
           <label for="description" class="mb-2 text-sm font-medium"
-            >Company Description:</label
+            >Company Description: <span class="text-red-500">*</span></label
           >
           <input
             type="text"
@@ -52,7 +52,7 @@
           />
         </div>
         <div class="flex flex-col mb-4">
-          <label for="website" class="mb-2 text-sm font-medium">Website:</label>
+          <label for="website" class="mb-2 text-sm font-medium">Website: <span class="text-red-500">*</span></label>
           <input
             type="url"
             id="website"
@@ -71,7 +71,7 @@
           </button>
           <button
             type="button"
-            @click="currentPage++"
+            @click="submitFormPage1"
             class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600"
           >
             Next
@@ -83,13 +83,12 @@
         <div class="flex flex-col mb-4">
           <label class="mb-2 font-bold text-md">Company Information</label>
           <div class="flex flex-col mb-4">
-            <label for="road" class="mb-2 text-sm font-medium">Road:</label>
+            <label for="road" class="mb-2 text-sm font-medium">Road: </label>
             <input
               type="text"
               id="road"
               class="p-2 rounded-md shadow-sm focus:outline-none"
               v-model="company.companyLocation.road"
-              required
             />
           </div>
           <div class="flex flex-col mb-4">
@@ -101,12 +100,11 @@
               id="subDistrict"
               class="p-2 rounded-md shadow-sm focus:outline-none"
               v-model="company.companyLocation.subDistrict"
-              required
             />
           </div>
           <div class="flex flex-col mb-4">
             <label for="province" class="mb-2 text-sm font-medium"
-              >Province:</label
+              >Province: <span class="text-red-500">*</span></label
             >
             <input
               type="text"
@@ -118,7 +116,7 @@
           </div>
           <div class="flex flex-col mb-4">
             <label for="country" class="mb-2 text-sm font-medium"
-              >Country:</label
+              >Country: <span class="text-red-500">*</span></label
             >
             <input
               type="text"
@@ -130,7 +128,7 @@
           </div>
           <div class="flex flex-col mb-4">
             <label for="zipcode" class="mb-2 text-sm font-medium"
-              >Zipcode:</label
+              >Zipcode: <span class="text-red-500">*</span></label
             >
             <input
               type="text"
@@ -143,7 +141,7 @@
         </div>
         <div class="flex flex-col mb-4">
           <label for="employees" class="mb-2 text-sm font-medium"
-            >Number of employees:</label
+            >Number of employees: <span class="text-red-500">*</span></label
           >
           <input
             type="number"
@@ -202,8 +200,9 @@ const company = ref({
 
 const submitFormPage1 = () => {
   // Handle form submission logic for Page 1
-  console.log("Page 1 submitted successfully!");
-  currentPage.value++;
+  if(validateForm() === true) {
+    currentPage.value++;
+  }
 };
 
 const submitFormPage2 = () => {
@@ -219,7 +218,6 @@ const submitFormPage2 = () => {
     emit("addCompany", companyDTO);
     resetForm();
   } else {
-    alert("Please fill in all required fields.");
   }
 };
 
@@ -237,20 +235,25 @@ const resetForm = () => {
     },
     companyEmployee: 0,
   };
+  currentPage.value = 1;
 };
 
 const validateForm = () => {
   // Add validation logic for Page 2 fields
   // For example: Check if required fields are filled
-  return (
-    company.value.companyName.trim().length > 0 &&
-    company.value.companyDescription.trim().length > 0 &&
-    company.value.companyLocation.road.trim().length > 0 &&
-    company.value.companyLocation.subDistrict.trim().length > 0 &&
-    company.value.companyLocation.province.trim().length > 0 &&
-    company.value.companyLocation.country.trim().length > 0 &&
-    company.value.companyLocation.zipcode.trim().length > 0 &&
-    company.value.companyEmployee > 0
-  );
+  if (currentPage.value === 1) {
+    return (
+      company.value.companyName.trim().length > 0 &&
+      company.value.companyDescription.trim().length > 0
+    );
+  }else if (currentPage.value === 2) {
+    return (
+      company.value.companyLocation.province.trim().length > 0 &&
+      company.value.companyLocation.country.trim().length > 0 &&
+      company.value.companyLocation.zipcode.trim().length > 0 &&
+      company.value.companyEmployee > 0
+    );
+  }
 };
+
 </script>

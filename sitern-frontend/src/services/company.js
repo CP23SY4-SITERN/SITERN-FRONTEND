@@ -1,5 +1,6 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { ref } from "vue";
+import { cookieData } from "./cookieData";
 
 export const companyStore = defineStore("companies", () => {
   const companies = ref([]);
@@ -16,6 +17,27 @@ export const companyStore = defineStore("companies", () => {
   // const url = import.meta.env.VITE_API_URL;
   const url = "https://capstone23.sit.kmutt.ac.th/sy4/api";
   // const url = "http://localhost:8080/api";
+  const cookie = cookieData();
+  const alertState = ref({
+    isOpen: false,
+    alertText: "",
+    alertType: "error", // Default to error type
+  });
+
+  function closeAlert() {
+    alertState.value.isOpen = false;
+    alertState.value.alertText = "";
+    alertState.value.alertType = "error";
+  }
+
+  function showAlert(message, type = "error", time = 3000) {
+    alertState.value.isOpen = true;
+    alertState.value.alertText = message;
+    alertState.value.alertType = type;
+    setTimeout(() => {
+      closeAlert();
+    }, time);
+  }
 
   async function handleResponse(res) {
     if (res.status === HTTP_STATUS.UNAUTHORIZED) {
@@ -25,14 +47,23 @@ export const companyStore = defineStore("companies", () => {
           .toLowerCase()
           .includes("please send refresh token to /refresh to refresh token")
       ) {
-        isLogin.refreshToken();
+        refreshToken();
       } else {
-        alert("Please login");
+        showAlert("Please login", "warning");
       }
+    } else if (res.status === HTTP_STATUS.UNAUTHORIZED) {
+      showAlert("You are not authorized to access this page.", "warning");
     } else if (res.status === HTTP_STATUS.FORBIDDEN) {
-      alert("You are not authorized to access this page.");
+      showAlert("Forbidden.", "error");
+    } else if (res.status === HTTP_STATUS.BAD_REQUEST) {
+      showAlert("Bad request", "error");
+    } else if (res.status === HTTP_STATUS.NOT_FOUND) {
+      showAlert("Company not found", "error");
     } else {
-      console.log("Error, cannot get data");
+      showAlert(
+        `An error occurred while performing the operation, Error: ${res.status}`,
+        "error"
+      );
     }
   }
 
@@ -42,15 +73,14 @@ export const companyStore = defineStore("companies", () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+         Authorization: `Bearer ${cookie.getCookie("token")}`,
         },
       });
       if (res.status === HTTP_STATUS.OK) {
         companies.value = await res.json();
-      } else {
-        handleResponse(res);
-      }
+      } 
     } catch (error) {
-      console.error("An error occurred:", error);
+      showAlert(`An error occurred: ${error.message}`, "error");
     }
   }
 
@@ -60,16 +90,17 @@ export const companyStore = defineStore("companies", () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie.getCookie("token")}`,
         },
         body: JSON.stringify(company),
       });
       if (res.status === HTTP_STATUS.CREATED) {
-        alert("Company created");
+        showAlert("Company created", "success");
       } else {
         handleResponse(res);
       }
     } catch (error) {
-      console.error("An error occurred:", error);
+      showAlert(`An error occurred: ${error.message}`, "error");
     }
   }
 
@@ -77,6 +108,9 @@ export const companyStore = defineStore("companies", () => {
     companies,
     getCompanies,
     addCompany,
+    alertState,
+    closeAlert,
+    showAlert,
   };
 });
 

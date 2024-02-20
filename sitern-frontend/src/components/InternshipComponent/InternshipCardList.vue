@@ -125,7 +125,8 @@
           @close="closeInternshipDetailModal"
           @editInternship="handleEditInternship"
         />
-        <DeleteButton class="right-20 bottom-2.5" @click="deleteInternship(internship.id)"/>
+        <DeleteButton class="right-20 bottom-2.5" @click="deleteInternship(internship.id)"
+        v-show="loginService.loginUser.role === 'STAFF'"/>
         <!-- Apply Button -->
         <button class="apply-button" @click="applyToInternship(internship)">
           Apply
@@ -157,6 +158,7 @@ import InternshipSearchbox from "./InternshipSearchbox.vue";
 import IntershipFilter from "./InternshipFilter.vue";
 import InternshipDetailModal from "./InternshipDetailModal.vue";
 import DeleteButton from "../ButtonComponent/DeleteButton.vue";
+import { loginStore } from "../../services/loginData";
 
 const emit = defineEmits(["editInternship", "deleteInternship", "cancel"]);
 const props = defineProps({
@@ -166,6 +168,7 @@ const props = defineProps({
   },
 });
 
+const loginService = loginStore();
 const searchValue = ref("");
 let internshipIdToDelete = ref(null);
 const selectedInternship = ref({});

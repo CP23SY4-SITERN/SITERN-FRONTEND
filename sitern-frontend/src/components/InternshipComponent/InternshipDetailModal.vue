@@ -8,7 +8,8 @@
       <div
         class="p-4 overflow-y-auto bg-white rounded-lg max-h-[40rem] sm:w-1/2"
       >
-        <div class="flex items-center justify-end space-x-2">
+        <div class="flex items-center justify-end space-x-2"
+        v-show="loginService.loginUser.role === 'STAFF'">
           <button @click="toggleEditModal">
             <svg
               class="feather feather-edit"
@@ -79,6 +80,7 @@
 import { ref, watch } from "vue";
 import EditInternshipModal from "./EditInternshipModal.vue";
 import { internshipsStore } from "../../services/internships.js";
+import { loginStore } from "../../services/loginData";
 
 const emit = defineEmits(["close", "editInternship"]);
 const props = defineProps({
@@ -93,7 +95,7 @@ const props = defineProps({
 const showModal = ref(props.show);
 const showEditModal = ref(false);
 const internshipsService = internshipsStore();
-
+const loginService = loginStore();
 const toggleEditModal = () => {
   showEditModal.value = !showEditModal.value;
   showModal.value = false;

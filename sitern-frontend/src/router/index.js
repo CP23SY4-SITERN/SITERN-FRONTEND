@@ -64,17 +64,17 @@ const router = createRouter({
   routes,
 });
 
-// // Navigation guard to handle search query
-// router.beforeEach((to, from, next) => {
-//   // Check if the route has a search query parameter
-//   if (to.query.search) {
-//     // If so, set it in the route's meta field
-//     to.meta.searchQuery = to.query.search;
-//   }
+// Navigation guard to handle search query
+router.beforeEach((to, from, next) => {
+  // Check if the route has a search query parameter
+  if (to.query.search) {
+    // If so, set it in the route's meta field
+    to.meta.searchQuery = to.query.search;
+  }
 
-//   // Continue with the navigation
-//   next();
-// });
+  // Continue with the navigation
+  next();
+});
 
 // Export the router
 export default router;

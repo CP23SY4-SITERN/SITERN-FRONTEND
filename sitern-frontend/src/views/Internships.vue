@@ -1,5 +1,7 @@
 <template>
   <div class="container relative mx-auto">
+    <AlertModal :showAlert="internshipsService.alertState.isOpen" :alertText="internshipsService.alertState.alertText" :alertType="internshipsService.alertState.alertType" />
+    <AlertModal :showAlert="companyService.alertState.isOpen" :alertText="companyService.alertState.alertText" :alertType="companyService.alertState.alertType" />
     <h1 class="mb-4 text-3xl font-bold">Internships</h1>
     <ul class="flex flex-col gap-4">
       <InternshipCardList
@@ -8,10 +10,9 @@
         @editInternship="editInternship"
       />
     </ul>
-
     <!-- Add Internship Button -->
     <button
-      v-show="!isPageScrolling && !isSomethingToggled"
+      v-show="(!isPageScrolling && !isSomethingToggled) && loginService.loginUser.role === 'STAFF'"
       @click="toggleAddButtons"
       class="bg-blue-500 add-internship-button"
     >
@@ -44,12 +45,14 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref, onUpdated, watch } from "vue";
+import { onMounted, ref, onUpdated, watch, watchEffect } from "vue";
 import { internshipsStore } from "../services/internships";
 import InternshipCardList from "../components/InternshipComponent/InternshipCardList.vue";
 import AddInternshipModal from "../components/InternshipComponent/AddInternshipModal.vue";
 import AddCompanyModal from "../components/CompanyComponent/AddCompanyModal.vue";
 import { companyStore } from "../services/company";
+import AlertModal from "../components/ModalComponent/AlertModal.vue";
+import { loginStore } from "../services/loginData";
 
 const internshipsService = internshipsStore();
 const companyService = companyStore();
@@ -60,6 +63,7 @@ const showAddCompanyModal = ref(false);
 const showAddInternshipModal = ref(false);
 const isPageScrolling = ref(false);
 const isSomethingToggled = ref(false);
+const loginService = loginStore();
 
 onMounted(async () => {
   refreshInternships();
@@ -85,7 +89,6 @@ const handleAddCompany = async (company) => {
 
   try {
     await companyService.addCompany(company);
-    alert("Add Company", company);
     closeModal("showAddCompanyModal");
     await refreshCompanies();
   } catch (error) {
@@ -120,7 +123,6 @@ const handleAddInternship = async (internship) => {
 
   try {
     await internshipsService.createInternship(internship);
-    alert("Add Internship", internship);
     closeModal("showAddInternshipModal");
     await refreshInternships();
   } catch (error) {
@@ -141,7 +143,7 @@ const validateForm = (data, type) => {
         "jobRequirement",
         "salary",
         "workType",
-        "job_location_ID",
+        "jobLocation_ID",
       ]
     : [
         "companyName",
@@ -153,11 +155,7 @@ const validateForm = (data, type) => {
 
   if (!checkRequiredFields(data, requiredFields)) {
     // You can customize this condition based on your form requirements
-    alert(
-      `Please fill in all required ${
-        isInternship ? "internship" : "company"
-      } fields.`
-    );
+    internshipsService.showAlert("Please fill in all required fields.", "error");
     return false;
   }
 
@@ -191,20 +189,18 @@ const toggleAddButtons = () => {
   showAddButtons.value = !showAddButtons.value;
 };
 
+
 // Listen for scroll events to update isPageScrolling
 window.addEventListener("scroll", () => {
   isPageScrolling.value = true;
+  setTimeout(() => {
+    isPageScrolling.value = false;
+  }, 3000);
 });
 
 // Watch changes in showAddButtons to handle fade animation
-watch(
+watchEffect(
   () => showAddButtons.value,
-  (newValue) => {
-    if (!newValue) {
-      // Delay setting isPageScrolling to false to allow fade-out animation
-      setTimeout(() => (isPageScrolling.value = false), 1000);
-    }
-  }
 );
 </script>
 
@@ -220,8 +216,9 @@ watch(
   cursor: pointer;
   z-index: 1; /* Adjust the z-index */
   opacity: 1;
-  transition: opacity 1s;
+  transition: opacity 0.5s ease-in-out; /* Smooth transition */
 }
+
 .add-buttons button {
   opacity: 1;
   transition: opacity 1s;

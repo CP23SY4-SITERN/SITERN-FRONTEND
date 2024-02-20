@@ -72,7 +72,7 @@
         </div>
           <div class="flex justify-end">
             <button type="button" @click="closeModal" class="mr-2 text-sm font-medium text-gray-500 hover:underline">Cancel</button>
-            <button type="button" @click="nextPage" class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600">Next</button>
+            <button type="button" @click="submitPageOne" class="px-4 py-2 font-medium text-white bg-blue-500 rounded-md focus:outline-none hover:bg-blue-600">Next</button>
           </div>
         </template>
 
@@ -149,7 +149,7 @@
             type="number"
             id="joblocationid"
             class="p-2 rounded-md shadow-sm focus:outline-none"
-            v-model="internship.job_location_ID"
+            v-model="internship.jobLocation_ID"
             required
           />
         </div>
@@ -166,7 +166,6 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-
 const emit = defineEmits(["addInternship", "cancel"]);
 const props = defineProps({
   show: {
@@ -178,6 +177,7 @@ const props = defineProps({
   },
   companies: {
     type: Array,
+    default: [],
   },
 });
 
@@ -197,7 +197,7 @@ const internship = ref({
   link: "",
   salary: "",
   workType: "",
-  job_location_ID: "",
+  jobLocation_ID: "",
   isActive: "",
 });
 
@@ -235,7 +235,7 @@ const submitPageOne = () => {
     // Handle form submission logic for Page 1
     nextPage();
   } else {
-    console.log("Page 1 validation failed. Please check the fields.");
+    showAlert("Page 1 validation failed. Please check the fields.");
   }
 };
 
@@ -256,13 +256,12 @@ const addInternship = () => {
       link: internship.value.link,
       salary: parseInt(internship.value.salary),
       workType: internship.value.workType,
-      job_location_ID: parseInt(internship.value.job_location_ID),
+      jobLocation_ID: parseInt(internship.value.jobLocation_ID),
     };
     emit("addInternship", internshipDTO);
     resetForm();
   } else {
     // Display an alert when form validation fails
-    alert("Please fill in all required fields.");
   }
 };
 
@@ -280,9 +279,10 @@ const resetForm = () => {
     link: "",
     salary: "",
     workType: "",
-    job_location_ID: "",
+    jobLocation_ID: "",
     isActive: "",
   };
+  currentPage.value = 1;
 };
 
 const validateForm = () => {

@@ -45,7 +45,7 @@
     </div>
     <div v-else-if="isLogin === true">
       <span class="mr-5">Hi, {{ loginService.loginUser.email }} </span>
-      <button class="inline-block px-4 py-2 text-sm leading-none text-white bg-blue-500 rounded hover:bg-blue-600" @click="logout">Logout</button>
+      <logout-button @logout="handleLogout" />
     </div>
   </nav>
 </template>
@@ -55,16 +55,14 @@ import LoginButton from '../ButtonComponent/LoginButton.vue';
 import RegisterButton from '../ButtonComponent/RegisterButton.vue';
 import { loginStore } from "../../services/loginData.js";
 import { computed } from "vue";
+import LogoutButton from '../ButtonComponent/LogoutButton.vue';
+
+const emit = defineEmits(["logout"]);
 
 const loginService = loginStore();
 const isLogin = computed(() => loginService.isLogin);
-const logout = async () => {
-  try {
-    await loginService.logout();
-  } catch (error) {
-    console.error("An error occurred:", error);
-    alert("Logout failed. Please try again.");
-  }
+const handleLogout = async () => {
+  emit("logout");
 };
 
 </script>

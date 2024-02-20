@@ -1,8 +1,10 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { ref } from "vue";
+import { cookieData } from "./cookieData";
 
 export const internshipsStore = defineStore("internships", () => {
   const internships = ref([]);
+  const cookie = cookieData();
   // const url = import.meta.env.VITE_API_URL;
   const url = "https://capstone23.sit.kmutt.ac.th/sy4/api";
   // const url = "http://localhost:8080/api";
@@ -17,6 +19,27 @@ export const internshipsStore = defineStore("internships", () => {
     INTERNAL_SERVER_ERROR: 500,
   };
 
+  const alertState = ref({
+    isOpen: false,
+    alertText: "",
+    alertType: "error", // Default to error type
+  });
+
+  function closeAlert() {
+    alertState.value.isOpen = false;
+    alertState.value.alertText = "";
+    alertState.value.alertType = "error";
+  }
+
+  function showAlert(message, type = "error", time = 3000) {
+    alertState.value.isOpen = true;
+    alertState.value.alertText = message;
+    alertState.value.alertType = type;
+    setTimeout(() => {
+      closeAlert();
+    }, time);
+  }
+
   function buildInternshipObject(internship) {
     return {
       title: internship.title,
@@ -28,7 +51,7 @@ export const internshipsStore = defineStore("internships", () => {
       link: internship.link,
       salary: internship.salary,
       workType: internship.workType,
-      job_location_id: internship.job_location_id,
+      jobLocation_ID: internship.jobLocation_ID,
     };
   }
 
@@ -40,14 +63,23 @@ export const internshipsStore = defineStore("internships", () => {
           .toLowerCase()
           .includes("please send refresh token to /refresh to refresh token")
       ) {
-        isLogin.refreshToken();
+        refreshToken();
       } else {
-        alert("Please login");
+        showAlert("Please login", "warning");
       }
     } else if (res.status === HTTP_STATUS.FORBIDDEN) {
-      alert("You are not authorized to access this page.");
+      showAlert("Forbidden.", "error");
+    } else if (res.status === HTTP_STATUS.UNAUTHORIZED) {
+      showAlert("You are not authorized to access this page.", "warning");
+    } else if (res.status === HTTP_STATUS.BAD_REQUEST) {
+      showAlert("Bad request", "error");
+    } else if (res.status === HTTP_STATUS.NOT_FOUND) {
+      showAlert("User not found", "error");
     } else {
-      console.log(`Error: ${res.status}, cannot perform the operation`);
+      showAlert(
+        `An error occurred while performing the operation, Error: ${res.status}`,
+        "error"
+      );
     }
   }
 
@@ -55,15 +87,19 @@ export const internshipsStore = defineStore("internships", () => {
     try {
       const res = await fetch(`${url}/jobs`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie.getCookie("token")}`,
+        },
       });
       if (res.status === HTTP_STATUS.OK) {
         internships.value = await res.json();
-      } else {
-        handleResponse(res);
       }
     } catch (error) {
-      console.error("An error occurred:", error);
+      showAlert(
+        `An error occurred: ${error.message}, please ensure that you are logged in`,
+        "error"
+      );
     }
   }
 
@@ -71,15 +107,17 @@ export const internshipsStore = defineStore("internships", () => {
     try {
       const res = await fetch(`${url}/jobs`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie.getCookie("token")}`,
+        },
         body: JSON.stringify(internship),
       });
-
       if (res.status === HTTP_STATUS.CREATED) {
-        alert("Internship created");
+        showAlert("Internship created", "success");
       }
     } catch (error) {
-      console.error(`An error occurred: ${error.message}`, error);
+      showAlert(`An error occurred: ${error.message}`, "error");
     }
   }
 
@@ -87,17 +125,20 @@ export const internshipsStore = defineStore("internships", () => {
     try {
       const res = await fetch(`${url}/jobs/${internship.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie.getCookie("token")}`,
+        },
         body: JSON.stringify(buildInternshipObject(internship)),
       });
 
       if (res.status === HTTP_STATUS.OK) {
-        alert("Internship updated");
+        showAlert("Internship updated", "success");
       } else {
         handleResponse(res);
       }
     } catch (error) {
-      console.error(`An error occurred: ${error.message}`, error);
+      showAlert(`An error occurred: ${error.message}`, "error");
     }
   }
 
@@ -105,21 +146,27 @@ export const internshipsStore = defineStore("internships", () => {
     try {
       const res = await fetch(`${url}/jobs/${id}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie.getCookie("token")}`,
+        },
       });
 
       if (res.status === HTTP_STATUS.OK) {
-        console.log("Internship deleted");
+        showAlert("Internship deleted", "success");
       } else {
         handleResponse(res);
       }
     } catch (error) {
-      console.error(`An error occurred: ${error.message}`, error);
+      showAlert(`An error occurred: ${error.message}`, "error");
     }
   }
 
   return {
     getInternships,
+    alertState,
+    closeAlert,
+    showAlert,
     createInternship,
     updateInternship,
     deleteInternship,

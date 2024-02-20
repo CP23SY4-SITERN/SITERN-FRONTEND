@@ -2,9 +2,11 @@ import { defineStore, acceptHMRUpdate } from "pinia";
 import { ref } from "vue";
 import { cookieData } from "./cookieData";
 import { jwtDecode } from "jwt-decode";
+import { useRouter } from "vue-router";
 
 export const loginStore = defineStore("loginData", () => {
   const cookie = cookieData();
+  const router = useRouter();
   const isLogin = ref(false);
   const loginUser = ref({ name: "Guest", role: "Guest", email: "" });
   // const url = "http://localhost:8080/api";
@@ -19,6 +21,46 @@ export const loginStore = defineStore("loginData", () => {
     NOT_FOUND: 404,
     INTERNAL_SERVER_ERROR: 500,
   };
+  
+  const alertState = ref({
+    isOpen: false,
+    alertText: "",
+    alertType: "error", // Default to error type
+  });
+
+  const confirmState = ref({
+    isOpen: false,
+    confirmText: "",
+    confirmType: "confirm", // Default to confirm type
+  });
+
+  function closeAlert() {
+    alertState.value.isOpen = false;
+    alertState.value.alertText = "";
+    alertState.value.alertType = "error";
+  }
+
+  function closeConfirm() {
+    confirmState.value.isOpen = false;
+    confirmState.value.confirmText = "";
+    confirmState.value.confirmType = "confirm";
+  }
+
+  function showConfirm(message, type = "confirm") {
+    confirmState.value.isOpen = true;
+    confirmState.value.confirmText = message;
+    confirmState.value.confirmType = type;
+  }
+
+  function showAlert(message, type = "error", time = 3000) {
+    alertState.value.isOpen = true;
+    alertState.value.alertText = message;
+    alertState.value.alertType = type;
+
+    setTimeout(() => {
+      closeAlert();
+    }, time);
+  }
 
   async function handleResponse(res) {
     if (res.status === HTTP_STATUS.UNAUTHORIZED) {
@@ -30,12 +72,19 @@ export const loginStore = defineStore("loginData", () => {
       ) {
         refreshToken();
       } else {
-        alert("Please login");
+        showAlert("Please login", "warning");
       }
     } else if (res.status === HTTP_STATUS.FORBIDDEN) {
-      alert("You are not authorized to access this page.");
+      showAlert("You are not authorized to access this page.", "warning");
+    } else if (res.status === HTTP_STATUS.BAD_REQUEST) {
+      showAlert("Bad request", "error");
+    } else if (res.status === HTTP_STATUS.NOT_FOUND) {
+      showAlert("User not found", "error");
     } else {
-      console.log(`Error: ${res.status}, cannot perform the operation`);
+      showAlert(
+        `An error occurred while performing the operation, Error: ${res.status}`,
+        "error"
+      );
     }
   }
 
@@ -56,13 +105,17 @@ export const loginStore = defineStore("loginData", () => {
   }
 
   async function checkLogin() {
-    const token = cookie.getCookie("token");
-    isLogin.value = !!token;
+    cookie.getCookie("token");
+    if (cookie.getCookie("token") != "") {
+      isLogin.value = true;
+    } else {
+      isLogin.value = false;
+    }
   }
 
   async function refreshToken() {
     try {
-      const res = await fetch(`${url}/jwt/refresh`, {
+      const res = await fetch(`${url}/auth/refresh`, {
         method: "GET",
         headers: {
           Authorization: "Bearer " + cookie.getCookie("refreshToken"),
@@ -80,11 +133,11 @@ export const loginStore = defineStore("loginData", () => {
         ) {
           cookie.eraseCookie("token");
           cookie.eraseCookie("refreshToken");
-          alert("Please login again");
+          showAlert("Please login again", "warning");
         }
       }
     } catch (error) {
-      console.error("An error occurred while refreshing token:", error);
+      showAlert(`An error occurred: ${error.message}`, "error");
     }
   }
 
@@ -104,13 +157,16 @@ export const loginStore = defineStore("loginData", () => {
         cookie.setCookie("token", token, 7);
         cookie.setCookie("refreshToken", tokenResponse.refreshToken, 7);
         setLogin(true);
-        console.log("decoded:", decoded);
         setLoginUser(decoded);
-        alert("Login successfully!");
-        console.log("Login successfully");
+        showAlert("Login successfully!", "success");
+        setTimeout(() => {
+          router.push("/");
+        }, 4000);
+      } else {
+        handleResponse(res);
       }
     } catch (error) {
-      console.error("An error occurred about login:", error);
+      showAlert(`An error occurred: ${error.message}`, "error");
     }
   }
 
@@ -127,34 +183,42 @@ export const loginStore = defineStore("loginData", () => {
         handleResponse(res);
       }
     } catch (error) {
-      console.error(`An error occurred: ${error.message}`, error);
+      showAlert(`An error occurred: ${error.message}`, "error");
     }
   }
 
   async function logout() {
     try {
       const res = await fetch(`${url}/auth/logout`, {
-        method: "GET",
+        method: "POST",
         headers: {
-          Authorization: "Bearer " + cookie.getCookie("refreshToken"),
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + cookie.getCookie("token"),
         },
+        body: JSON.stringify({ token: cookie.getCookie("token") ,refreshToken: cookie.getCookie("refreshToken") }),
       });
       if (res.status === HTTP_STATUS.OK) {
         cookie.eraseCookie("token");
         cookie.eraseCookie("refreshToken");
         setLogin(false);
         clearLoginUser();
-        alert("Logout successfully");
+        showAlert("Logout successfully", "success");
       } else {
         handleResponse(res);
       }
     } catch (error) {
-      console.error("An error occurred while logging out:", error);
+      showAlert(`An error occurred: ${error.message}`, "error");
     }
   }
 
   return {
     login,
+    alertState,
+    confirmState,
+    closeConfirm,
+    closeAlert,
+    showAlert,
+    showConfirm,
     logout,
     register,
     isLogin,

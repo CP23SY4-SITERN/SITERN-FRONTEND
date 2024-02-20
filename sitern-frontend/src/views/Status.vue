@@ -1,7 +1,7 @@
 <template>
   <div>
     <button @click="handleAlert">Show Alert</button>
-    <AlertModal :showAlert="showAlert" :alertText="'Login Successful'" /> 
+    <AlertModal :showAlert="showAlert" :alertText="'You should login to get on this page'" :alertType="'warning'" /> 
   </div>
 </template>
 

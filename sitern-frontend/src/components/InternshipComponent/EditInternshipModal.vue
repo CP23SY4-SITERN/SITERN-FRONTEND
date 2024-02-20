@@ -147,8 +147,8 @@
             type="number"
             id="joblocationid"
             class="p-2 rounded-md shadow-sm focus:outline-none"
-            v-model="internship.job_location_ID"
-            :placeholder="props.internship.job_location_ID"
+            v-model="internship.jobLocation_ID"
+            :placeholder="props.internship.jobLocation_ID"
           />
         </div>
           <!-- Navigation buttons -->
@@ -188,7 +188,7 @@ const internship = ref({
   link: props.internship.link || "",
   salary: props.internship.salary ||"",
   workType: props.internship.workType || "",
-  job_location_ID: props.internship.job_location_ID ||"",
+  jobLocation_ID: props.internship.jobLocation_ID ||"",
 });
 
 const currentPage = ref(1);
@@ -222,9 +222,9 @@ const editInternship = () => {
       internshipEdit[key] = internship.value[key];
     }
   }
-
   // Emit the edited internship object
   emit("editInternship", internshipEdit);
+  currentPage.value = 1;
 };
 
 </script>

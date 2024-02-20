@@ -97,7 +97,7 @@ export const internshipsStore = defineStore("internships", () => {
       }
     } catch (error) {
       showAlert(
-        `An error occurred: ${error.message}, please ensure that you are logged in`,
+        `Failed to retrieve internships: ${error.message}, please ensure that you are logged in`,
         "error"
       );
     }

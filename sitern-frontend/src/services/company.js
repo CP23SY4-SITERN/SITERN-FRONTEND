@@ -80,7 +80,10 @@ export const companyStore = defineStore("companies", () => {
         companies.value = await res.json();
       } 
     } catch (error) {
-      showAlert(`An error occurred: ${error.message}`, "error");
+      showAlert(
+        `Failed to retrieve companies: ${error.message}, please ensure that you are logged in`,
+        "error"
+      );
     }
   }
 

@@ -178,7 +178,8 @@ export const loginStore = defineStore("loginData", () => {
         body: JSON.stringify(user),
       });
       if (res.status === HTTP_STATUS.CREATED) {
-        alert("Register completed");
+        showAlert("Register completed", "success");
+        login(user);
       } else {
         handleResponse(res);
       }

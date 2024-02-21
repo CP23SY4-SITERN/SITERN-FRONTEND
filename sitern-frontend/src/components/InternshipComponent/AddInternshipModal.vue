@@ -1,6 +1,11 @@
 <!-- AddInternshipModal.vue -->
 <template>
   <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-50">
+    <AlertModal
+      :showAlert="internshipsService.alertState.isOpen"
+      :alertText="internshipsService.alertState.alertText"
+      :alertType="internshipsService.alertState.alertType"
+    />
     <div class="p-8 overflow-y-auto bg-white rounded-lg max-h-[50rem] sm:w-1/2">
       <div class="flex items-center justify-end space-x-2">
         <button @click="closeModal">
@@ -166,6 +171,8 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import AlertModal from '../ModalComponent/AlertModal.vue';
+import { internshipsStore } from '../../services/internships';
 const emit = defineEmits(["addInternship", "cancel"]);
 const props = defineProps({
   show: {
@@ -181,6 +188,7 @@ const props = defineProps({
   },
 });
 
+const internshipsService = internshipsStore();
 const isTitleValid = ref(false);
 const isCompanyValid = ref(false);
 const currentPage = ref(1);
@@ -235,7 +243,7 @@ const submitPageOne = () => {
     // Handle form submission logic for Page 1
     nextPage();
   } else {
-    showAlert("Page 1 validation failed. Please check the fields.");
+    internshipsService.showAlert("Page 1 validation failed. Please check the fields.", "warning");
   }
 };
 

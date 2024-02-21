@@ -1,7 +1,20 @@
 <template>
   <div class="container relative mx-auto">
-    <AlertModal :showAlert="internshipsService.alertState.isOpen" :alertText="internshipsService.alertState.alertText" :alertType="internshipsService.alertState.alertType" />
-    <AlertModal :showAlert="companyService.alertState.isOpen" :alertText="companyService.alertState.alertText" :alertType="companyService.alertState.alertType" />
+    <AlertModal
+      :showAlert="internshipsService.alertState.isOpen"
+      :alertText="internshipsService.alertState.alertText"
+      :alertType="internshipsService.alertState.alertType"
+    />
+    <AlertModal
+      :showAlert="companyService.alertState.isOpen"
+      :alertText="companyService.alertState.alertText"
+      :alertType="companyService.alertState.alertType"
+    />
+    <AlertModal
+      :showAlert="loginService.alertState.isOpen"
+      :alertText="loginService.alertState.alertText"
+      :alertType="loginService.alertState.alertType"
+    />
     <h1 class="mb-4 text-3xl font-bold">Internships</h1>
     <ul class="flex flex-col gap-4">
       <InternshipCardList
@@ -12,7 +25,11 @@
     </ul>
     <!-- Add Internship Button -->
     <button
-      v-show="(!isPageScrolling && !isSomethingToggled) && loginService.loginUser.role === 'STAFF'"
+      v-show="
+        !isPageScrolling &&
+        !isSomethingToggled &&
+        loginService.loginUser.role === 'STAFF'
+      "
       @click="toggleAddButtons"
       class="bg-blue-500 add-internship-button"
     >
@@ -154,7 +171,10 @@ const validateForm = (data, type) => {
 
   if (!checkRequiredFields(data, requiredFields)) {
     // You can customize this condition based on your form requirements
-    internshipsService.showAlert("Please fill in all required fields.", "error");
+    internshipsService.showAlert(
+      "Please fill in all required fields.",
+      "error"
+    );
     return false;
   }
 
@@ -188,7 +208,6 @@ const toggleAddButtons = () => {
   showAddButtons.value = !showAddButtons.value;
 };
 
-
 // Listen for scroll events to update isPageScrolling
 window.addEventListener("scroll", () => {
   isPageScrolling.value = true;
@@ -198,9 +217,7 @@ window.addEventListener("scroll", () => {
 });
 
 // Watch changes in showAddButtons to handle fade animation
-watchEffect(
-  () => showAddButtons.value,
-);
+watchEffect(() => showAddButtons.value);
 </script>
 
 <style scoped>

@@ -179,7 +179,9 @@ export const loginStore = defineStore("loginData", () => {
       });
       if (res.status === HTTP_STATUS.CREATED) {
         showAlert("Register completed", "success");
-        login(user);
+        setTimeout(() => {
+          login(user);
+        }, 2500);
       } else {
         handleResponse(res);
       }

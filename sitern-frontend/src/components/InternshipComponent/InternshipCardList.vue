@@ -257,7 +257,7 @@ const toggleFavorite = (internship) => {
 
 const applyToInternship = (internship) => {
   // Add logic for applying to the internship
-  console.log(`Applied to ${internship.title}`);
+  loginService.showAlert(`Applied to ${internship.title}`, "success");
 };
 
 // Watch for changes in searchValue

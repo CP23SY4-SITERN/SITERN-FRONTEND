@@ -15,7 +15,7 @@ const handleSubmit = async (registerUser) => {
     await loginService.register(registerUser); // Wait for registration to complete
   } catch (error) {
     console.error("An error occurred:", error);
-    alert("Registration failed. Please try again."); // User friendly error message
+    loginService.showAlert("Registration failed. Please try again.", "error"); // User friendly error message
   }
 };
 </script>
